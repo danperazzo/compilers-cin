@@ -4,20 +4,22 @@ grammar Grammar;
 /* parser */
 
 type : 'int' | 'string' | 'float';
-WHITE_SPACE : ' ';
-
+integer : INTEGER;
 
 
 /* regra raiz */
-file : (variable_definition | function_definition)+;
-variable_definition : type '\n';
+file : ((variable_definition | function_definition) ';' )+;
+
+variable_definition : 'float' ID '=' FLOAT | 'int ' ID  ' = ' INTEGER | 'string' ID '=' STRING   ;
 function_definition : 'u\n';
 
 
 /* lexer */  
 INTEGER : [0-9]+;
 FLOAT : [0-9]+ '.' [0-9]+;
-STRING : '\"'  ([a-z] | [0-9] | [A-Z])+   '\"';
+STRING : '"'  ([a-z] | [0-9] | [A-Z])+   '"';
+ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
+WS : [\t\r\n]+ -> skip ;
 
 
 

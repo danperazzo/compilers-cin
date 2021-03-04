@@ -17,6 +17,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitType(GrammarParser.TypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#integer}.
+	 * @param ctx the parse tree
+	 */
+	void enterInteger(GrammarParser.IntegerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#integer}.
+	 * @param ctx the parse tree
+	 */
+	void exitInteger(GrammarParser.IntegerContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#file}.
 	 * @param ctx the parse tree
 	 */
