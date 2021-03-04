@@ -1,0 +1,15 @@
+T__0=1
+T__1=2
+T__2=3
+T__3=4
+T__4=5
+WHITE_SPACE=6
+INTEGER=7
+FLOAT=8
+STRING=9
+'int'=1
+'string'=2
+'float'=3
+'\n'=4
+'u\n'=5
+' '=6

@@ -2,11 +2,24 @@
 grammar Grammar;
 
 /* parser */
+
+type : 'int' | 'string' | 'float';
+WHITE_SPACE : ' ';
+
+
+
 /* regra raiz */
-file : ;
+file : (variable_definition | function_definition)+;
+variable_definition : type '\n';
+function_definition : 'u\n';
 
 
 /* lexer */  
+INTEGER : [0-9]+;
+FLOAT : [0-9]+ '.' [0-9]+;
+STRING : '\"'  ([a-z] | [0-9] | [A-Z])+   '\"';
+
+
 
 
 /*
