@@ -8,11 +8,13 @@ identifier  :   ID;
 integer : INTEGER;
 floating : FLOAT;
 string : STRING;
+function_call : identifier ('(' expression (',' expression)* ')')  | '('  ')';
+
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
 statement : ('return' expression | variable_definition | variable_assignment) ';';
 
-expression  :  (integer | floating | string) ;    
+expression  :  (integer | floating | string)|function_call |identifier ;    
 
 /* regra raiz */
 file : ((variable_definition | function_definition) ';' )+;
