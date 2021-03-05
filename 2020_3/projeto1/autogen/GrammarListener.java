@@ -17,6 +17,76 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitType(GrammarParser.TypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdentifier(GrammarParser.IdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdentifier(GrammarParser.IdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#integer}.
+	 * @param ctx the parse tree
+	 */
+	void enterInteger(GrammarParser.IntegerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#integer}.
+	 * @param ctx the parse tree
+	 */
+	void exitInteger(GrammarParser.IntegerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#floating}.
+	 * @param ctx the parse tree
+	 */
+	void enterFloating(GrammarParser.FloatingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#floating}.
+	 * @param ctx the parse tree
+	 */
+	void exitFloating(GrammarParser.FloatingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void enterString(GrammarParser.StringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void exitString(GrammarParser.StringContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterArguments(GrammarParser.ArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#arguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitArguments(GrammarParser.ArgumentsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#body}.
+	 * @param ctx the parse tree
+	 */
+	void enterBody(GrammarParser.BodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#body}.
+	 * @param ctx the parse tree
+	 */
+	void exitBody(GrammarParser.BodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpression(GrammarParser.ExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpression(GrammarParser.ExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#file}.
 	 * @param ctx the parse tree
 	 */
