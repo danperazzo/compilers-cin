@@ -17,7 +17,8 @@ public class GrammarParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, INTEGER=12, FLOAT=13, STRING=14, ID=15, WS=16, SPACE=17;
+		T__9=10, T__10=11, INTEGER=12, FLOAT=13, STRING=14, ID=15, WS=16, SPACE=17, 
+		COMMENT=18, LINE_COMMENT=19;
 	public static final int
 		RULE_type = 0, RULE_identifier = 1, RULE_integer = 2, RULE_floating = 3, 
 		RULE_string = 4, RULE_arguments = 5, RULE_body = 6, RULE_statement = 7, 
@@ -40,7 +41,7 @@ public class GrammarParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			"INTEGER", "FLOAT", "STRING", "ID", "WS", "SPACE"
+			"INTEGER", "FLOAT", "STRING", "ID", "WS", "SPACE", "COMMENT", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -722,7 +723,7 @@ public class GrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23Z\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\25Z\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
 		"\f\t\f\4\r\t\r\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\3\7"+
 		"\3\7\3\7\3\7\7\7,\n\7\f\7\16\7/\13\7\3\7\3\7\3\7\3\7\5\7\65\n\7\3\b\3"+

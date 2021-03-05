@@ -31,6 +31,8 @@ ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
 /* to skip  */
 WS : [\t\r\n]+ -> skip ;
 SPACE  : [ \t]+ -> skip ;
+COMMENT : '/*' .* '*/' -> skip;
+LINE_COMMENT :   '//' [\r\n]* -> skip;
 
 /*
 MANUAL
