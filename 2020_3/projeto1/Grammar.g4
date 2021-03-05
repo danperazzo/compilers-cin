@@ -8,8 +8,9 @@ identifier  :   ID;
 integer : INTEGER;
 floating : FLOAT;
 string : STRING;
-arguments : '(' type identifier (',' type identifier)* ')';
-body : 'o';
+arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
+body : '{'  statement+  '}';
+statement : 'u';
 
 expression  :  integer | floating | string ;    
 
