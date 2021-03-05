@@ -14,13 +14,13 @@ arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
 statement : ('return' expression | variable_definition | variable_assignment | expression) ';';
 
-expression  :  (integer | floating | string)|function_call |identifier ;    
+expression  :  '('expression')' | expression ('+'|'/'|'*'|'-'|'<'|'>'|'>='|'<='|'=='|'!=') expression | function_call |identifier | integer | floating | string ;
 
 /* regra raiz */
-file : ((variable_definition | function_definition) ';' )+;
+file : (variable_definition | function_definition)+;
 
 variable_definition : type identifier '=' expression  ;
-variable_assignment : identifier '=' expression;
+variable_assignment : identifier ('='|'/='|'+='|'-=') expression;
 function_definition : type identifier arguments body ;
 
 
