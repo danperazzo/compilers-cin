@@ -17,7 +17,7 @@ public class GrammarParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, INTEGER=7, FLOAT=8, STRING=9, 
-		ID=10, WS=11;
+		ID=10, WS=11, SPACE=12;
 	public static final int
 		RULE_type = 0, RULE_file = 1, RULE_variable_definition = 2, RULE_function_definition = 3;
 	private static String[] makeRuleNames() {
@@ -36,7 +36,7 @@ public class GrammarParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, "INTEGER", "FLOAT", "STRING", 
-			"ID", "WS"
+			"ID", "WS", "SPACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -217,6 +217,9 @@ public class GrammarParser extends Parser {
 	}
 
 	public static class Variable_definitionContext extends ParserRuleContext {
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
 		public TerminalNode ID() { return getToken(GrammarParser.ID, 0); }
 		public TerminalNode FLOAT() { return getToken(GrammarParser.FLOAT, 0); }
 		public TerminalNode INTEGER() { return getToken(GrammarParser.INTEGER, 0); }
@@ -238,51 +241,26 @@ public class GrammarParser extends Parser {
 	public final Variable_definitionContext variable_definition() throws RecognitionException {
 		Variable_definitionContext _localctx = new Variable_definitionContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_variable_definition);
+		int _la;
 		try {
-			setState(32);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case T__2:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(20);
-				match(T__2);
-				setState(21);
-				match(ID);
-				setState(22);
-				match(T__4);
-				setState(23);
-				match(FLOAT);
-				}
-				break;
-			case T__0:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(24);
-				match(T__0);
-				setState(25);
-				match(ID);
-				setState(26);
-				match(T__4);
-				setState(27);
-				match(INTEGER);
-				}
-				break;
-			case T__1:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(28);
-				match(T__1);
-				setState(29);
-				match(ID);
-				setState(30);
-				match(T__4);
-				setState(31);
-				match(STRING);
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(20);
+			type();
+			setState(21);
+			match(ID);
+			setState(22);
+			match(T__4);
+			setState(23);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INTEGER) | (1L << FLOAT) | (1L << STRING))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -317,7 +295,7 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(34);
+			setState(25);
 			match(T__5);
 			}
 		}
@@ -333,17 +311,15 @@ public class GrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r\'\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\3\2\3\2\3\3\3\3\5\3\17\n\3\3\3\3\3\6\3\23\n\3\r\3\16"+
-		"\3\24\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4#\n\4\3\5\3\5"+
-		"\3\5\2\2\6\2\4\6\b\2\3\3\2\3\5\2&\2\n\3\2\2\2\4\22\3\2\2\2\6\"\3\2\2\2"+
-		"\b$\3\2\2\2\n\13\t\2\2\2\13\3\3\2\2\2\f\17\5\6\4\2\r\17\5\b\5\2\16\f\3"+
-		"\2\2\2\16\r\3\2\2\2\17\20\3\2\2\2\20\21\7\6\2\2\21\23\3\2\2\2\22\16\3"+
-		"\2\2\2\23\24\3\2\2\2\24\22\3\2\2\2\24\25\3\2\2\2\25\5\3\2\2\2\26\27\7"+
-		"\5\2\2\27\30\7\f\2\2\30\31\7\7\2\2\31#\7\n\2\2\32\33\7\3\2\2\33\34\7\f"+
-		"\2\2\34\35\7\7\2\2\35#\7\t\2\2\36\37\7\4\2\2\37 \7\f\2\2 !\7\7\2\2!#\7"+
-		"\13\2\2\"\26\3\2\2\2\"\32\3\2\2\2\"\36\3\2\2\2#\7\3\2\2\2$%\7\b\2\2%\t"+
-		"\3\2\2\2\5\16\24\"";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16\36\4\2\t\2\4\3"+
+		"\t\3\4\4\t\4\4\5\t\5\3\2\3\2\3\3\3\3\5\3\17\n\3\3\3\3\3\6\3\23\n\3\r\3"+
+		"\16\3\24\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\2\2\6\2\4\6\b\2\4\3\2\3\5\3\2"+
+		"\t\13\2\33\2\n\3\2\2\2\4\22\3\2\2\2\6\26\3\2\2\2\b\33\3\2\2\2\n\13\t\2"+
+		"\2\2\13\3\3\2\2\2\f\17\5\6\4\2\r\17\5\b\5\2\16\f\3\2\2\2\16\r\3\2\2\2"+
+		"\17\20\3\2\2\2\20\21\7\6\2\2\21\23\3\2\2\2\22\16\3\2\2\2\23\24\3\2\2\2"+
+		"\24\22\3\2\2\2\24\25\3\2\2\2\25\5\3\2\2\2\26\27\5\2\2\2\27\30\7\f\2\2"+
+		"\30\31\7\7\2\2\31\32\t\3\2\2\32\7\3\2\2\2\33\34\7\b\2\2\34\t\3\2\2\2\4"+
+		"\16\24";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

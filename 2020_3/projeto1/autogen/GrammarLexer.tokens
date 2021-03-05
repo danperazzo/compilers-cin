@@ -9,6 +9,7 @@ FLOAT=8
 STRING=9
 ID=10
 WS=11
+SPACE=12
 'int'=1
 'string'=2
 'float'=3

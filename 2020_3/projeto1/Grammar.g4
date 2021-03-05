@@ -9,7 +9,7 @@ type : 'int' | 'string' | 'float';
 /* regra raiz */
 file : ((variable_definition | function_definition) ';' )+;
 
-variable_definition : 'float' ID '=' FLOAT | 'int' ID  '=' INTEGER | 'string' ID '=' STRING   ;
+variable_definition : type ID '=' (FLOAT | INTEGER | STRING)  ;
 function_definition : 'u\n';
 
 
@@ -19,7 +19,7 @@ FLOAT : [0-9]+ '.' [0-9]+;
 STRING : '"'  ([a-z] | [0-9] | [A-Z])+   '"';
 ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
 WS : [\t\r\n]+ -> skip ;
-
+SPACE  : [ \t]+ -> skip ;
 
 
 
