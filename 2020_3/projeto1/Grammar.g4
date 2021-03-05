@@ -4,13 +4,12 @@ grammar Grammar;
 /* parser */
 
 type : 'int' | 'string' | 'float';
-integer : INTEGER;
 
 
 /* regra raiz */
 file : ((variable_definition | function_definition) ';' )+;
 
-variable_definition : 'float' ID '=' FLOAT | 'int ' ID  ' = ' INTEGER | 'string' ID '=' STRING   ;
+variable_definition : 'float' ID '=' FLOAT | 'int' ID  '=' INTEGER | 'string' ID '=' STRING   ;
 function_definition : 'u\n';
 
 

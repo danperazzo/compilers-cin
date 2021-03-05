@@ -4,18 +4,14 @@ T__2=3
 T__3=4
 T__4=5
 T__5=6
-T__6=7
-T__7=8
-INTEGER=9
-FLOAT=10
-STRING=11
-ID=12
-WS=13
+INTEGER=7
+FLOAT=8
+STRING=9
+ID=10
+WS=11
 'int'=1
 'string'=2
 'float'=3
 ';'=4
 '='=5
-'int '=6
-' = '=7
-'u\n'=8
+'u\n'=6
