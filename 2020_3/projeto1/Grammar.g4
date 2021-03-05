@@ -9,15 +9,16 @@ integer : INTEGER;
 floating : FLOAT;
 string : STRING;
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
-body : '{'  statement+  '}';
-statement : 'u';
+body : '{'  statement*  '}';
+statement : ('return' expression | variable_definition | variable_assignment) ';';
 
-expression  :  integer | floating | string ;    
+expression  :  (integer | floating | string) ;    
 
 /* regra raiz */
 file : ((variable_definition | function_definition) ';' )+;
 
 variable_definition : type identifier '=' expression  ;
+variable_assignment : identifier '=' expression;
 function_definition : type identifier arguments body ;
 
 

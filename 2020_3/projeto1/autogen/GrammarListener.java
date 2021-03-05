@@ -117,6 +117,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitVariable_definition(GrammarParser.Variable_definitionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#variable_assignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariable_assignment(GrammarParser.Variable_assignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#variable_assignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariable_assignment(GrammarParser.Variable_assignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#function_definition}.
 	 * @param ctx the parse tree
 	 */
