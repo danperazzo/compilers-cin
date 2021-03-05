@@ -12,7 +12,7 @@ function_call : identifier ('(' expression (',' expression)* ')')  | '('  ')';
 
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
-statement : ('return' expression | variable_definition | variable_assignment) ';';
+statement : ('return' expression | variable_definition | variable_assignment | expression) ';';
 
 expression  :  (integer | floating | string)|function_call |identifier ;    
 
