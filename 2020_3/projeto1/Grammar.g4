@@ -53,7 +53,10 @@ ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
 WS : [\t\r\n]+ -> skip ;
 SPACE  : [ \t]+ -> skip ;
 COMMENT : '/*' .*? '*/' -> skip;
-LINE_COMMENT :   '//' [\r\n]* -> skip;
+LINE_COMMENT :   '//' ~[\r\n]* -> skip;
+
+INCLUDE : '#include' ~[\r\n]* -> skip;
+DEFINE : '#define' ~[\r\n]* -> skip;
 
 /*
 MANUAL

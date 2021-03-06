@@ -20,7 +20,8 @@ public class GrammarParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
-		INTEGER=32, FLOAT=33, STRING=34, ID=35, WS=36, SPACE=37, COMMENT=38, LINE_COMMENT=39;
+		INTEGER=32, FLOAT=33, STRING=34, ID=35, WS=36, SPACE=37, COMMENT=38, LINE_COMMENT=39, 
+		INCLUDE=40, DEFINE=41;
 	public static final int
 		RULE_type = 0, RULE_identifier = 1, RULE_integer = 2, RULE_floating = 3, 
 		RULE_string = 4, RULE_function_call = 5, RULE_arguments = 6, RULE_body = 7, 
@@ -53,7 +54,7 @@ public class GrammarParser extends Parser {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, "INTEGER", "FLOAT", "STRING", 
-			"ID", "WS", "SPACE", "COMMENT", "LINE_COMMENT"
+			"ID", "WS", "SPACE", "COMMENT", "LINE_COMMENT", "INCLUDE", "DEFINE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1534,7 +1535,7 @@ public class GrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3)\u00f8\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3+\u00f8\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\3\2\3\2\3\3\3\3\3\4"+
