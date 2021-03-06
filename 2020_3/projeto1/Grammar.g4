@@ -16,11 +16,11 @@ statement : (('return' expression | variable_definition | variable_assignment | 
 
 expression  :  '('expression')' 
 				| expression  '/' expression | expression  '*' expression 
-				|  expression '+' expression | expression '-' expression 
+				|  expression ('+'|'-') expression  
 				| expression ('<') expression |expression ('>') expression | expression ('>=') expression | expression ('<=') expression
 				| expression ('=='|'!=') expression
 				| function_call |identifier | integer | floating | string | array | array_literal 
-				| '-' expression | '+' expression ;
+				| ('-') expression | ('+') expression ;
 
 array : identifier ('[' expression ']')+;
 array_literal : '{'expression (',' expression)* '}';
