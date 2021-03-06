@@ -15,11 +15,12 @@ body : '{'  statement*  '}';
 statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement | for_loop;
 
 expression  :  '('expression')' 
-				| expression (| '/'|'*') expression
-				|  expression ('+'|'-') expression 
-				| expression ('<'|'>'|'>='|'<=') expression
+				| expression  '/' expression | expression  '*' expression 
+				|  expression '-' expression | expression '+' expression 
+				| expression ('<') expression |expression ('>') expression | expression ('>=') expression | expression ('<=') expression
 				| expression ('=='|'!=') expression
-				| function_call |identifier | integer | floating | string | array | array_literal ;
+				| function_call |identifier | integer | floating | string | array | array_literal 
+				| '-' expression | '+' expression ;
 
 array : identifier ('[' expression ']')+;
 array_literal : '{'expression (',' expression)* '}';
@@ -34,7 +35,7 @@ for_step : variable_assignment;
 
 
 /* regra raiz */
-file : (variable_definition | function_definition)+;
+file : (variable_definition ';' | function_definition)+;
 
 variable_definition : type (identifier|array) '=' expression  ;
 variable_assignment : (identifier|array) ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
@@ -42,9 +43,9 @@ function_definition : type identifier arguments body ;
 
 
 /* lexer */  
-INTEGER : [0-9]+;
+INTEGER :  [0-9]+;
 FLOAT : [0-9]+ '.' [0-9]+;
-STRING : '"'  ([a-z] | [0-9] | [A-Z])+   '"';
+STRING : '"'  .*?  '"';
 ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
 
 
