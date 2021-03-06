@@ -127,6 +127,46 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitElse_statement(GrammarParser.Else_statementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#for_loop}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_loop(GrammarParser.For_loopContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#for_loop}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_loop(GrammarParser.For_loopContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#for_initializer}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_initializer(GrammarParser.For_initializerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#for_initializer}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_initializer(GrammarParser.For_initializerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#for_condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_condition(GrammarParser.For_conditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#for_condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_condition(GrammarParser.For_conditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#for_step}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_step(GrammarParser.For_stepContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#for_step}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_step(GrammarParser.For_stepContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#file}.
 	 * @param ctx the parse tree
 	 */

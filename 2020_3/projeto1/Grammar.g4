@@ -12,18 +12,25 @@ function_call : identifier ('(' expression (',' expression)* ')')  | '('  ')';
 
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
-statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement;
+statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement | for_loop;
 
-expression  :  '('expression')' | expression ('+'|'/'|'*'|'-'|'<'|'>'|'>='|'<='|'=='|'!=') expression | function_call |identifier | integer | floating | string ;
+expression  :  '('expression')' | expression ('+'|'-') expression 
+				|  expression(| '/'|'*'|'<'|'>'|'>='|'<='|'=='|'!=') expression | function_call |identifier | integer | floating | string ;
 
 if_statement : 'if' '(' expression ')' body (else_statement)*;
 else_statement : 'else' statement;
+
+for_loop : 'for' '(' for_initializer ';' for_condition ';' for_step ')' body;
+for_initializer : variable_definition | variable_assignment;
+for_condition : expression;
+for_step : variable_assignment;
+
 
 /* regra raiz */
 file : (variable_definition | function_definition)+;
 
 variable_definition : type identifier '=' expression  ;
-variable_assignment : identifier ('='|'/='|'+='|'-=') expression;
+variable_assignment : identifier ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
 function_definition : type identifier arguments body ;
 
 
