@@ -25,8 +25,8 @@ expression  :  '('expression')'
 array : identifier ('[' expression ']')+;
 array_literal : '{'expression (',' expression)* '}';
 
-if_statement : 'if' '(' expression ')' body (else_statement)*;
-else_statement : 'else' statement;
+if_statement : 'if' '(' expression ')' body else_statement? | 'if' '(' expression ')' statement else_statement? ;
+else_statement : 'else' statement | 'else' body;
 
 for_loop : 'for' '(' for_initializer ';' for_condition ';' for_step ')' body;
 for_initializer : variable_definition | variable_assignment;
@@ -37,7 +37,7 @@ for_step : variable_assignment;
 /* regra raiz */
 file : (variable_definition ';' | function_definition)+;
 
-variable_definition : type (identifier|array) '=' expression  ;
+variable_definition : type (identifier|array) '=' expression  (',' (identifier|array) '=' expression)*   ;
 variable_assignment : (identifier|array) ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
 function_definition : type identifier arguments body ;
 
