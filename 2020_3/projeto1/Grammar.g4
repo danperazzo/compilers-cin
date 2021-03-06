@@ -14,8 +14,12 @@ arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
 statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement | for_loop;
 
-expression  :  '('expression')' | expression ('+'|'-') expression 
-				|  expression(| '/'|'*'|'<'|'>'|'>='|'<='|'=='|'!=') expression | function_call |identifier | integer | floating | string ;
+expression  :  '('expression')' 
+				| expression (| '/'|'*') expression
+				|  expression ('+'|'-') expression 
+				| expression ('<'|'>'|'>='|'<=') expression
+				| expression ('=='|'!=') expression
+				| function_call |identifier | integer | floating | string ;
 
 if_statement : 'if' '(' expression ')' body (else_statement)*;
 else_statement : 'else' statement;
