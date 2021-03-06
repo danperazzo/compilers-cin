@@ -16,7 +16,7 @@ statement : (('return' expression | variable_definition | variable_assignment | 
 
 expression  :  '('expression')' 
 				| expression  '/' expression | expression  '*' expression 
-				|  expression '-' expression | expression '+' expression 
+				|  expression '+' expression | expression '-' expression 
 				| expression ('<') expression |expression ('>') expression | expression ('>=') expression | expression ('<=') expression
 				| expression ('=='|'!=') expression
 				| function_call |identifier | integer | floating | string | array | array_literal 
