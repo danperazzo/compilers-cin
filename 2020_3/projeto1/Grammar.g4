@@ -19,7 +19,10 @@ expression  :  '('expression')'
 				|  expression ('+'|'-') expression 
 				| expression ('<'|'>'|'>='|'<=') expression
 				| expression ('=='|'!=') expression
-				| function_call |identifier | integer | floating | string ;
+				| function_call |identifier | integer | floating | string | array | array_literal ;
+
+array : identifier ('[' expression ']')+;
+array_literal : '{'expression (',' expression)* '}';
 
 if_statement : 'if' '(' expression ')' body (else_statement)*;
 else_statement : 'else' statement;
@@ -33,8 +36,8 @@ for_step : variable_assignment;
 /* regra raiz */
 file : (variable_definition | function_definition)+;
 
-variable_definition : type identifier '=' expression  ;
-variable_assignment : identifier ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
+variable_definition : type (identifier|array) '=' expression  ;
+variable_assignment : (identifier|array) ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
 function_definition : type identifier arguments body ;
 
 
@@ -48,7 +51,7 @@ ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
 /* to skip  */
 WS : [\t\r\n]+ -> skip ;
 SPACE  : [ \t]+ -> skip ;
-COMMENT : '/*' .* '*/' -> skip;
+COMMENT : '/*' .*? '*/' -> skip;
 LINE_COMMENT :   '//' [\r\n]* -> skip;
 
 /*
