@@ -12,9 +12,12 @@ function_call : identifier ('(' expression (',' expression)* ')')  | '('  ')';
 
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
-statement : ('return' expression | variable_definition | variable_assignment | expression) ';';
+statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement;
 
 expression  :  '('expression')' | expression ('+'|'/'|'*'|'-'|'<'|'>'|'>='|'<='|'=='|'!=') expression | function_call |identifier | integer | floating | string ;
+
+if_statement : 'if' '(' expression ')' body (else_statement)*;
+else_statement : 'else' statement;
 
 /* regra raiz */
 file : (variable_definition | function_definition)+;

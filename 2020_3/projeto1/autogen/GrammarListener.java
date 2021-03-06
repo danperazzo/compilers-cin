@@ -107,6 +107,26 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitExpression(GrammarParser.ExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#if_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIf_statement(GrammarParser.If_statementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#if_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIf_statement(GrammarParser.If_statementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#else_statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterElse_statement(GrammarParser.Else_statementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#else_statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitElse_statement(GrammarParser.Else_statementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#file}.
 	 * @param ctx the parse tree
 	 */
