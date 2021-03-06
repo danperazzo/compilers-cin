@@ -37,7 +37,7 @@ for_step : variable_assignment;
 /* regra raiz */
 file : (variable_definition ';' | function_definition)+;
 
-variable_definition : type (identifier|array) '=' expression  (',' (identifier|array) '=' expression)*   ;
+variable_definition : type (identifier|array) '=' expression  (',' (identifier|array) '=' expression)*?   ;
 variable_assignment : (identifier|array) ('='|'/='|'+='|'-=') expression | identifier ('++'|'--');
 function_definition : type identifier arguments body ;
 
@@ -46,7 +46,7 @@ function_definition : type identifier arguments body ;
 INTEGER :  [0-9]+;
 FLOAT : [0-9]+ '.' [0-9]+;
 STRING : '"'  .*?  '"';
-ID : ([a-z]|[A-Z]) ([a-z] | [0-9] | [A-Z])*;
+ID : ([a-z]|[A-Z]) ('_'|[a-z] | [0-9] | [A-Z])*;
 
 
 /* to skip  */

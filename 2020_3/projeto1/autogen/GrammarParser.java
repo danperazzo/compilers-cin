@@ -1543,8 +1543,8 @@ public class GrammarParser extends Parser {
 	public final Variable_definitionContext variable_definition() throws RecognitionException {
 		Variable_definitionContext _localctx = new Variable_definitionContext(_ctx, getState());
 		enterRule(_localctx, 38, RULE_variable_definition);
-		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(230);
@@ -1571,37 +1571,39 @@ public class GrammarParser extends Parser {
 			expression(0);
 			setState(247);
 			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while (_la==T__4) {
-				{
-				{
-				setState(237);
-				match(T__4);
-				setState(240);
-				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
-				case 1:
+			_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
+			while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1+1 ) {
 					{
-					setState(238);
-					identifier();
-					}
-					break;
-				case 2:
 					{
-					setState(239);
-					array();
+					setState(237);
+					match(T__4);
+					setState(240);
+					_errHandler.sync(this);
+					switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
+					case 1:
+						{
+						setState(238);
+						identifier();
+						}
+						break;
+					case 2:
+						{
+						setState(239);
+						array();
+						}
+						break;
 					}
-					break;
-				}
-				setState(242);
-				match(T__25);
-				setState(243);
-				expression(0);
-				}
+					setState(242);
+					match(T__25);
+					setState(243);
+					expression(0);
+					}
+					} 
 				}
 				setState(249);
 				_errHandler.sync(this);
-				_la = _input.LA(1);
+				_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
 			}
 			}
 		}
@@ -1817,12 +1819,12 @@ public class GrammarParser extends Parser {
 		"\n\24\r\24\16\24\u00e6\3\25\3\25\3\25\5\25\u00ec\n\25\3\25\3\25\3\25\3"+
 		"\25\3\25\5\25\u00f3\n\25\3\25\3\25\3\25\7\25\u00f8\n\25\f\25\16\25\u00fb"+
 		"\13\25\3\26\3\26\5\26\u00ff\n\26\3\26\3\26\3\26\3\26\3\26\3\26\5\26\u0107"+
-		"\n\26\3\27\3\27\3\27\3\27\3\27\3\27\2\3\24\30\2\4\6\b\n\f\16\20\22\24"+
-		"\26\30\32\34\36 \"$&(*,\2\6\3\2\3\5\3\2\25\26\3\2\34\37\3\2 !\2\u0121"+
-		"\2.\3\2\2\2\4\60\3\2\2\2\6\62\3\2\2\2\b\64\3\2\2\2\n\66\3\2\2\2\fF\3\2"+
-		"\2\2\16X\3\2\2\2\20Z\3\2\2\2\22n\3\2\2\2\24\u0080\3\2\2\2\26\u00a2\3\2"+
-		"\2\2\30\u00ab\3\2\2\2\32\u00c6\3\2\2\2\34\u00cc\3\2\2\2\36\u00ce\3\2\2"+
-		"\2 \u00da\3\2\2\2\"\u00dc\3\2\2\2$\u00de\3\2\2\2&\u00e4\3\2\2\2(\u00e8"+
+		"\n\26\3\27\3\27\3\27\3\27\3\27\3\27\3\u00f9\3\24\30\2\4\6\b\n\f\16\20"+
+		"\22\24\26\30\32\34\36 \"$&(*,\2\6\3\2\3\5\3\2\25\26\3\2\34\37\3\2 !\2"+
+		"\u0121\2.\3\2\2\2\4\60\3\2\2\2\6\62\3\2\2\2\b\64\3\2\2\2\n\66\3\2\2\2"+
+		"\fF\3\2\2\2\16X\3\2\2\2\20Z\3\2\2\2\22n\3\2\2\2\24\u0080\3\2\2\2\26\u00a2"+
+		"\3\2\2\2\30\u00ab\3\2\2\2\32\u00c6\3\2\2\2\34\u00cc\3\2\2\2\36\u00ce\3"+
+		"\2\2\2 \u00da\3\2\2\2\"\u00dc\3\2\2\2$\u00de\3\2\2\2&\u00e4\3\2\2\2(\u00e8"+
 		"\3\2\2\2*\u0106\3\2\2\2,\u0108\3\2\2\2./\t\2\2\2/\3\3\2\2\2\60\61\7%\2"+
 		"\2\61\5\3\2\2\2\62\63\7\"\2\2\63\7\3\2\2\2\64\65\7#\2\2\65\t\3\2\2\2\66"+
 		"\67\7$\2\2\67\13\3\2\2\289\5\4\3\29:\7\6\2\2:?\5\24\13\2;<\7\7\2\2<>\5"+
@@ -1880,8 +1882,8 @@ public class GrammarParser extends Parser {
 		"\u00ed\u00ee\7\34\2\2\u00ee\u00f9\5\24\13\2\u00ef\u00f2\7\7\2\2\u00f0"+
 		"\u00f3\5\4\3\2\u00f1\u00f3\5\26\f\2\u00f2\u00f0\3\2\2\2\u00f2\u00f1\3"+
 		"\2\2\2\u00f3\u00f4\3\2\2\2\u00f4\u00f5\7\34\2\2\u00f5\u00f6\5\24\13\2"+
-		"\u00f6\u00f8\3\2\2\2\u00f7\u00ef\3\2\2\2\u00f8\u00fb\3\2\2\2\u00f9\u00f7"+
-		"\3\2\2\2\u00f9\u00fa\3\2\2\2\u00fa)\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc"+
+		"\u00f6\u00f8\3\2\2\2\u00f7\u00ef\3\2\2\2\u00f8\u00fb\3\2\2\2\u00f9\u00fa"+
+		"\3\2\2\2\u00f9\u00f7\3\2\2\2\u00fa)\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc"+
 		"\u00ff\5\4\3\2\u00fd\u00ff\5\26\f\2\u00fe\u00fc\3\2\2\2\u00fe\u00fd\3"+
 		"\2\2\2\u00ff\u0100\3\2\2\2\u0100\u0101\t\4\2\2\u0101\u0102\5\24\13\2\u0102"+
 		"\u0107\3\2\2\2\u0103\u0104\5\4\3\2\u0104\u0105\t\5\2\2\u0105\u0107\3\2"+
