@@ -3,7 +3,7 @@ grammar Grammar;
 
 /* parser */
 
-type : 'int' | 'string' | 'float';
+type : 'int'  | 'float';
 identifier  :   ID;
 integer : INTEGER;
 floating : FLOAT;
@@ -12,7 +12,7 @@ function_call : identifier ('(' expression (',' expression)* ')')  | '('  ')';
 
 arguments : ('(' type identifier (',' type identifier)* ')')  | '('  ')' ;
 body : '{'  statement*  '}';
-statement : (('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement | for_loop;
+statement : ( ('return' expression | variable_definition | variable_assignment | expression) ';')| if_statement | for_loop;
 
 expression  :  '('expression')' 
 				| expression  '/' expression | expression  '*' expression 
