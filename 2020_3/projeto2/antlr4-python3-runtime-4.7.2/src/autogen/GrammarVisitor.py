@@ -7,61 +7,16 @@ else:
 
 # This class defines a complete generic visitor for a parse tree produced by GrammarParser.
 
-'''
-COMO RESGATAR INFORMAÇÕES DA ÁRVORE
-
-Observe o seu Grammar.g4. Cada regra sintática gera uma função com o nome corespondente no Visitor e na ordem em que está na gramática.
-
-Se for utilizar sua gramática do projeto 1, por causa de conflitos com Python, substitua as regras file por fiile e type por tyype. Use prints temporários para ver se está no caminho certo.  
-"make tree" agora desenha a árvore sintática, se quiser vê-la para qualquer input, enquanto "make" roda este visitor sobre o a árvore gerada a partir de Grammar.g4 alimentada pelo input.
-
-Exemplos:  
-
-# Obs.: Os exemplos abaixo utilizam nós 'expression', mas servem apra qualquer tipo de nó
-
-self.visitChildren(ctx) # visita todos os filhos do nó atual
-expr = self.visit(ctx.expression())  # visita a subárvore do nó expression e retorna o valor retornado na função "visitRegra"
-
-for i in range(len(ctx.expression())): # para cada expressão que este nó possui...
-    ident = ctx.expression(i) # ...pegue a i-ésima expressão
-
-
-if ctx.FLOAT() != None: # se houver um FLOAT (em vez de INT ou VOID) neste nó (parser)
-    return Type.FLOAT # retorne tipo float
-
-ctx.identifier().getText()  # Obtém o texto contido no nó (neste caso, será obtido o nome do identifier)
-
-token = ctx.identifier(i).IDENTIFIER().getPayload() # Obtém o token referente à uma determinada regra léxica (neste caso, IDENTIFIER)
-token.line      # variável com a linha do token
-token.column    # variável com a coluna do token
-'''
-
-
-# Dica: Retorne Type.INT, Type.FLOAT, etc. Nos nós e subnós das expressões para fazer a checagem de tipos enquanto percorre a expressão.
-class Type:
-    VOID = "void"
-    INT = "int"
-    FLOAT = "float"
-    STRING = "char *"
-
-class GrammarCheckerVisitor(ParseTreeVisitor):
-    ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
-    inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
+class GrammarVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#fiile.
     def visitFiile(self, ctx:GrammarParser.FiileContext):
         return self.visitChildren(ctx)
 
 
-     # Visit a parse tree produced by GrammarParser#function_definition.
+    # Visit a parse tree produced by GrammarParser#function_definition.
     def visitFunction_definition(self, ctx:GrammarParser.Function_definitionContext):
-        tyype = ctx.tyype().getText()
-        name = ctx.identifier().getText()
-        params = self.visit(ctx.arguments())
-        self.ids_defined[name] = tyype, params, None
-        self.inside_what_function = name
-        self.visit(ctx.body())
-        return
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by GrammarParser#body.
@@ -106,22 +61,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#variable_definition.
     def visitVariable_definition(self, ctx:GrammarParser.Variable_definitionContext):
-        
-        tyype = ctx.tyype().getText()
-        print("funfou")
-
-        ch = self.visitChildren(ctx)
-
-        # print(ch)
-        if(tyype == Type.INT and ch == Type.FLOAT ):
-            
-            token = ctx.tyype().INT().getPayload()
-            line = token.line
-            row = token.column
-        
-
-            print("Warning na linha %d e coluna %d" %(line,row))
-        return ch
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by GrammarParser#variable_assignment.
@@ -161,20 +101,23 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#integer.
     def visitInteger(self, ctx:GrammarParser.IntegerContext):
-        return Type.INT
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by GrammarParser#floating.
-    def visitFloating(self, ctx:GrammarParser.FloatingContext): 
-        return Type.FLOAT
+    def visitFloating(self, ctx:GrammarParser.FloatingContext):
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by GrammarParser#string.
     def visitString(self, ctx:GrammarParser.StringContext):
-        return Type.STRING
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by GrammarParser#identifier.
     def visitIdentifier(self, ctx:GrammarParser.IdentifierContext):
         return self.visitChildren(ctx)
 
+
+
+del GrammarParser
