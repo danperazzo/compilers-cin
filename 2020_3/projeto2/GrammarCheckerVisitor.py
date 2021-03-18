@@ -108,20 +108,23 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitVariable_definition(self, ctx:GrammarParser.Variable_definitionContext):
         
         tyype = ctx.tyype().getText()
-        print("funfou")
-
-        ch = self.visitChildren(ctx)
-
-        # print(ch)
-        if(tyype == Type.INT and ch == Type.FLOAT ):
+     
+        for i in range(len(ctx.identifier())): # para cada expressão que este nó possui...
             
-            token = ctx.tyype().INT().getPayload()
-            line = token.line
-            row = token.column
-        
+            name = ctx.identifier(i).getText()
+            exp = self.visit(ctx.expression(i))
+            self.ids_defined[name] = tyype, None, None
 
-            print("Warning na linha %d e coluna %d" %(line,row))
-        return ch
+            if(tyype == Type.INT and exp == Type.FLOAT):
+
+                token = ctx.tyype().INT().getPayload()
+                line = token.line
+                row = token.column
+
+
+                print("Warning na linha %d e coluna %d" %(line,row))
+        
+        return 
 
 
     # Visit a parse tree produced by GrammarParser#variable_assignment.

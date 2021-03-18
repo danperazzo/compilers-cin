@@ -6,7 +6,7 @@
 int main () {
 	// Test: int op int
 	// Should Pass
-	int num = 2.0;
+	int num=1,m = 2;
 	
 	return 0;
 }
