@@ -9,8 +9,9 @@ void test() {
 int main () {
 	// Test: int op int
 	// Should Pass
-	
-	int a = 0+0+1+2+3+3;
-	test();
+	int b = 1;
+
+	int a = test()+4;
+
 	return 0;
 }

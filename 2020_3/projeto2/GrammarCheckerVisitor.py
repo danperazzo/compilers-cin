@@ -174,7 +174,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         line = token.line
                         row = token.column
 
-                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                        print("ERRO de expressão void: na linha %d e coluna %d" %(line,row))
                 
                     
         return 
@@ -227,7 +227,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         token = tyype.STRING().getPayload()
                     line = token.line
                     row = token.column
-                    print("ERROR: na linha %d e coluna %d" %(line,row))
+                    print("ERRO de expressão void: na linha %d e coluna %d" %(line,row))
 
         return
 
@@ -244,6 +244,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
             if  (type_0 == Type.FLOAT and type_1==Type.INT) or (type_1 == Type.FLOAT and type_0==Type.INT):
                 return Type.FLOAT
+
+            if (type_0 == Type.VOID or type_1 == Type.VOID):
+                return Type.VOID
 
         return self.visitChildren(ctx)
 
@@ -265,13 +268,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         name = identifier.getText()
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
+            return tyype
         else:
             token = identifier.IDENTIFIER().getPayload()
             line = token.line
             row = token.column
-            print("ERROR: na linha %d e coluna %d" %(line,row))
+            print("ERROR de expressão VOID: na linha %d e coluna %d" %(line,row))
             tyype = None
-        return tyype
+            return
 
 
     # Visit a parse tree produced by GrammarParser#arguments.
@@ -301,5 +305,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#identifier.
     def visitIdentifier(self, ctx:GrammarParser.IdentifierContext):
-        return self.visitChildren(ctx)
+
+        name = ctx.getText()
+        tyype = self.ids_defined[name][0]
+        
+        return tyype.getText()
 
