@@ -141,7 +141,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     type_exp = self.visit(exp)
                     self.ids_defined[name] = tyype, None, None
 
-                    if(tyype.getText() == Type.INT and type_exp == Type.FLOAT):
+                    if tyype.getText() == Type.INT and type_exp == Type.FLOAT:
 
                         token = tyype.INT().getPayload()
                         line = token.line
@@ -150,7 +150,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                         print("WARNING: na linha %d e coluna %d" %(line,row))
 
-                    elif( (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING):
+                    elif (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING:
 
                         if tyype.getText() == Type.INT:
 
@@ -163,7 +163,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                         print("ERROR: na linha %d e coluna %d" %(line,row))
 
-                    elif( type_exp == Type.VOID):
+                    elif type_exp == Type.VOID:
 
                         if tyype.getText() == Type.INT:
                             
@@ -182,43 +182,52 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#variable_assignment.
     def visitVariable_assignment(self, ctx:GrammarParser.Variable_assignmentContext):
-        name = ctx.identifier().getText()
-        tyype = self.ids_defined[name][0]  
-        
-        exp = ctx.expression()
-        
-        if exp is not None:
-            type_exp = self.visit(exp)
+        identifier = ctx.identifier()
+        name = identifier.getText()
 
-            if(tyype == Type.INT and exp == Type.FLOAT):
-                token = tyype.INT().getPayload()
-                line = token.line
-                row = token.column
-                print("WARNING: na linha %d e coluna %d" %(line,row))
+        if name not in self.ids_defined.keys():
+            token = identifier.IDENTIFIER().getPayload()
+            line = token.line
+            row = token.column
+            print("ERROR: na linha %d e coluna %d" %(line,row))
 
-            elif( (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING):
-                    
+        else:
+            tyype = self.ids_defined[name][0]  
+        
+            exp = ctx.expression()
+            
+            if exp is not None:
+                type_exp = self.visit(exp)
+
+                if tyype == Type.INT and exp == Type.FLOAT:
+                    token = tyype.INT().getPayload()
+                    line = token.line
+                    row = token.column
+                    print("WARNING: na linha %d e coluna %d" %(line,row))
+
+                elif (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING:
+                        
+                        if tyype.getText() == Type.INT:
+
+                            token = tyype.INT().getPayload()
+                        else:
+                            token = tyype.FLOAT().getPayload()
+                            
+                        line = token.line
+                        row = token.column
+                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                
+                elif type_exp == Type.VOID:
                     if tyype.getText() == Type.INT:
 
                         token = tyype.INT().getPayload()
-                    else:
+                    elif tyype.getText() == Type.FLOAT:
                         token = tyype.FLOAT().getPayload()
-                        
+                    else:
+                        token = tyype.STRING().getPayload()
                     line = token.line
                     row = token.column
                     print("ERROR: na linha %d e coluna %d" %(line,row))
-            
-            elif(type_exp == Type.VOID):
-                if tyype.getText() == Type.INT:
-
-                    token = tyype.INT().getPayload()
-                elif tyype.getText() == Type.FLOAT:
-                    token = tyype.FLOAT().getPayload()
-                else:
-                    token = tyype.STRING().getPayload()
-                line = token.line
-                row = token.column
-                print("ERROR: na linha %d e coluna %d" %(line,row))
 
         return
 
@@ -241,10 +250,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by GrammarParser#function_call.
     def visitFunction_call(self, ctx:GrammarParser.Function_callContext):
         
-        name = ctx.identifier().getText()
+        identifier = ctx.identifier()
+        name = identifier.getText()
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
-        
+        else:
+            token = identifier.IDENTIFIER().getPayload()
+            line = token.line
+            row = token.column
+            print("ERROR: na linha %d e coluna %d" %(line,row))
+            tyype = None
         return tyype
 
 
