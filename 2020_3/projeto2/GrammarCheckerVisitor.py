@@ -83,7 +83,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print("ERROR: na linha %d e coluna %d" %(line,row))
             else:
                 type_exp = self.visit(ctx.expression())
-                
+
                 if type_exp == Type.VOID:
                     token = ctx.RETURN().getPayload()
                     line = token.line
@@ -320,9 +320,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitFunction_call(self, ctx:GrammarParser.Function_callContext):
         identifier = ctx.identifier()
         name = identifier.getText()
-
+        
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
+            params_types = self.ids_defined[name][1]
+
+            for idx,exp in enumerate(ctx.expression()):
+                type_exp = self.visit(exp)
+
+                if not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
+                    token = identifier.IDENTIFIER().getPayload()
+                    line = token.line
+                    row = token.column
+                    print("ERROR de tipo de argumento: na linha %d e coluna %d" %(line,row))
+                    break
+           
             return tyype
         else:
             token = identifier.IDENTIFIER().getPayload()
@@ -335,15 +347,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#arguments.
     def visitArguments(self, ctx:GrammarParser.ArgumentsContext):
+        params_types = []
+        
         for i in range(len(ctx.tyype())):
             tyype = ctx.tyype(i)
             identifier = ctx.identifier(i)
             name = identifier.getText()
 
+            params_types.append(tyype.getText())
+
             if name not in self.ids_defined.keys():
                 self.ids_defined[name] = tyype, None, None
 
-        return
+        return params_types
 
 
     # Visit a parse tree produced by GrammarParser#tyype.
