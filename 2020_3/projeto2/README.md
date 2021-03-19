@@ -37,7 +37,7 @@ variável/função não foi declarada.
 * **(done)** Operações aritméticas entre expressões do tipo ​ int​ e ​ float
 devem retornar uma expressão do tipo ​float​.
 
-* Arrays  devem seguir as mesmas regras indicadas
+* **(done)** Arrays  devem seguir as mesmas regras indicadas
 acima, porém seu ​ erro ​ ou ​ warning ​ emitido deve
 indicar também o índice no qual houve a ocorrência do
 mesmo, considerando que só teremos ​ arrays​ estáticos

@@ -1,15 +1,15 @@
-// Int Expression type checking Test
-
-// Test: return int
-// Should Pass
-
-
+void test()
+{
+	
+}
 int main () {
-	// Test: int op int
-	// Should Pass
-	int b = 1;
-	float c = 1.0;
+	// Test: array erros
+	// Should Not Pass
+	int a[3] = { -1.0, "0.0", 1 };
+	float b[3] = { -1, 0, 1 };
 
-	b = 1 + c ;
+	a[0] = test();
+	a[1] = "b";
+
 
 }
