@@ -6,8 +6,10 @@
 int main () {
 	// Test: int op int
 	// Should Pass
-	int num=2,m=0.2,m=1;
+	int num = 2.0;
+	
+	int num = "oskasod";
 
-	num++;
+	num = "2133213";
 	return 0;
 }

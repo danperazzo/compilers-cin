@@ -107,7 +107,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by GrammarParser#variable_definition.
     def visitVariable_definition(self, ctx:GrammarParser.Variable_definitionContext):
         
-        tyype = ctx.tyype().getText()
+        tyype = ctx.tyype()
      
         for i in range(len(ctx.identifier())): # para cada expressão que este nó possui...
             
@@ -119,15 +119,30 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 type_exp = self.visit(exp)
                 self.ids_defined[name] = tyype, None, None
 
-                if(tyype == Type.INT and type_exp == Type.FLOAT):
+                if(tyype.getText() == Type.INT and type_exp == Type.FLOAT):
 
-                    token = ctx.tyype().INT().getPayload()
+                    token = tyype.INT().getPayload()
                     line = token.line
                     row = token.column
 
 
                     print("Warning na linha %d e coluna %d" %(line,row))
-        
+
+                elif( (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING):
+                    
+                    if tyype.getText() == Type.INT:
+
+                        token = tyype.INT().getPayload()
+                    else:
+                        token = tyype.FLOAT().getPayload()
+                        
+                    line = token.line
+                    row = token.column
+
+
+                    print("Error na linha %d e coluna %d" %(line,row))
+                
+                    
         return 
 
 
@@ -139,13 +154,27 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         exp = ctx.expression()
 
         if exp is not None:
-            exp_visit = self.visit(exp)
+            type_exp = self.visit(exp)
 
             if(tyype == Type.INT and exp == Type.FLOAT):
-                token = ctx.identifier().IDENTIFIER().getPayload()
+                token = tyype.INT().getPayload()
                 line = token.line
                 row = token.column
                 print("Warning na linha %d e coluna %d" %(line,row))
+
+            elif( (tyype.getText() == Type.INT or tyype.getText() == Type.FLOAT) and type_exp == Type.STRING):
+                    
+                    if tyype.getText() == Type.INT:
+
+                        token = tyype.INT().getPayload()
+                    else:
+                        token = tyype.FLOAT().getPayload()
+                        
+                    line = token.line
+                    row = token.column
+
+
+                    print("Erro na linha %d e coluna %d" %(line,row))
 
         return
 
