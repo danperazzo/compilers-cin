@@ -135,11 +135,11 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                 name = ctx.identifier(i).getText()
                 exp = ctx.expression(i)
+                self.ids_defined[name] = tyype, None, None
 
                 if exp is not None:
                 
                     type_exp = self.visit(exp)
-                    self.ids_defined[name] = tyype, None, None
 
                     if tyype.getText() == Type.INT and type_exp == Type.FLOAT:
 
@@ -253,6 +253,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#array.
     def visitArray(self, ctx:GrammarParser.ArrayContext):
+
+        tyype = self.visit(ctx.expression())
+        print(tyype)
+
         return self.visitChildren(ctx)
 
 

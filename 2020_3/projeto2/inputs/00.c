@@ -10,8 +10,9 @@ int main () {
 	// Test: int op int
 	// Should Pass
 	int b = 1;
+	float c;
 
-	int a = test()+4;
+	int a = c;
 
 	return 0;
 }

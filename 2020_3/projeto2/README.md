@@ -34,7 +34,7 @@ variável/função não foi declarada.
 	* Lembre-se que toda função definida possui um tipo, e sua
 	chamada (​ function_call ​ ) retorna um valor daquele tipo.
 
-* Operações aritméticas entre expressões do tipo ​ int​ e ​ float
+* **(done)** Operações aritméticas entre expressões do tipo ​ int​ e ​ float
 devem retornar uma expressão do tipo ​float​.
 
 * Arrays  devem seguir as mesmas regras indicadas
