@@ -234,6 +234,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#expression.
     def visitExpression(self, ctx:GrammarParser.ExpressionContext):
+
+        list_exp = ctx.expression()
+
+        if len(list_exp)>1:
+
+            type_0 = self.visit(list_exp[0])
+            type_1 = self.visit(list_exp[1])
+
+            if  (type_0 == Type.FLOAT and type_1==Type.INT) or (type_1 == Type.FLOAT and type_0==Type.INT):
+                return Type.FLOAT
+
         return self.visitChildren(ctx)
 
 

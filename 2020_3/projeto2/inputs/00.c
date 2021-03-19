@@ -10,7 +10,7 @@ int main () {
 	// Test: int op int
 	// Should Pass
 	
-	int a = 0;
+	int a = 0+0+1+2+3+3;
 	test();
 	return 0;
 }
