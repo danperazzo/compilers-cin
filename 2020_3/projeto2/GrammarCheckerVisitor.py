@@ -140,28 +140,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     type_exp = self.visit(exp)
 
                     if tyype == Type.INT and type_exp == Type.FLOAT:
-                        token = ctx_tyype.INT().getPayload()
+                        token = exp.floating().FLOATING().getPayload()
                         line = token.line
                         row = token.column
                         print("WARNING: na linha %d e coluna %d" %(line,row))
 
                     elif (tyype == Type.INT or tyype == Type.FLOAT) and type_exp == Type.STRING:
-                        if tyype == Type.INT:
-                            token = ctx_tyype.INT().getPayload()
-                        else:
-                            token = ctx_tyype.FLOAT().getPayload()
+                        token = exp.string().STRING().getPayload()
                         line = token.line
                         row = token.column
                         print("ERROR: na linha %d e coluna %d" %(line,row))
 
                     elif type_exp == Type.VOID:
-                        if tyype == Type.INT:
-                            token = ctx_tyype.INT().getPayload()
-                        else:
-                            token = ctx_tyype.FLOAT().getPayload()
+                        token = exp.function_call().identifier().IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("ERRO de expressão void: na linha %d e coluna %d" %(line,row))
+                        print("ERROR: na linha %d e coluna %d" %(line,row))
             
             for i in range(len(ctx.array())): # para cada array/array_list que este nó possui...
                 array = ctx.array(i)
@@ -204,13 +198,13 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             token = array_literal.expression(idx).string().STRING().getPayload()
                             line = token.line
                             row = token.column
-                            print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                            print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
 
                         elif type_array_literal == Type.VOID:
                             token = array_literal.expression(idx).function_call().identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
-                            print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                            print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
                     
         return 
 
@@ -252,18 +246,18 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     line = token.line
                     row = token.column
                     if idx is not None:
-                        print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                        print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
                     else:
-                        print("WARNING: na linha %d e coluna %d" %(line,row))
+                        print("ERROR: na linha %d e coluna %d" %(line,row))
                 
                 elif type_exp == Type.VOID:
                     token = exp.function_call().identifier().IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
                     if idx is not None:
-                        print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                        print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
                     else:
-                        print("WARNING: na linha %d e coluna %d" %(line,row))
+                        print("ERROR: na linha %d e coluna %d" %(line,row))
 
         return
 

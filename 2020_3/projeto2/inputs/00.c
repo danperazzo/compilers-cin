@@ -11,5 +11,10 @@ int main () {
 	a[0] = test();
 	a[1] = "b";
 
+	int c = 0.0;
+	int d = "a";
+	float e = "b";
+	int f = test();
 
+	return 0;
 }
