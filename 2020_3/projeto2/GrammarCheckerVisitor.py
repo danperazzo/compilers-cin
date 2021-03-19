@@ -129,7 +129,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#variable_assignment.
     def visitVariable_assignment(self, ctx:GrammarParser.Variable_assignmentContext):
-        return self.visitChildren(ctx)
+        name = ctx.identifier().getText()
+        tyype = self.ids_defined[name][0]  
+        exp = self.visit(ctx.expression())
+
+        if(tyype == Type.INT and exp == Type.FLOAT):
+            token = ctx.identifier().IDENTIFIER().getPayload()
+            line = token.line
+            row = token.column
+            print("Warning na linha %d e coluna %d" %(line,row))
+        
+        return
 
 
     # Visit a parse tree produced by GrammarParser#expression.
