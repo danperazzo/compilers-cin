@@ -2,14 +2,16 @@
 
 // Test: return int
 // Should Pass
-
+void teste(){
+	int i =0;
+}
 int main () {
 	// Test: int op int
 	// Should Pass
-	int num = 2.0;
 	
-	int num = "oskasod";
+	int num = 1;
 
-	num = "2133213";
+
+	num = teste();
 	return 0;
 }
