@@ -47,7 +47,7 @@ int main () {
 	// Test: int = float
 	// Emit Warning - Possible loss of information (converting float to int)
 	int f = 2.0;
-	f = num + (2 - t);
+	f = 2 - 2.0);
 	f = fsquare(5) * t;
 	
 	int hello = 450 + 5.0;

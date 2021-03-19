@@ -77,12 +77,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             tyype = self.ids_defined[name][0]
 
             if tyype == Type.VOID:
-
                 token = ctx.RETURN().getPayload()
                 line = token.line
                 row = token.column
                 print("ERROR: na linha %d e coluna %d" %(line,row))
-       
+            else:
+                type_exp = self.visit(ctx.expression())
+                
+                if type_exp == Type.VOID:
+                    token = ctx.RETURN().getPayload()
+                    line = token.line
+                    row = token.column
+                    print("ERROR: na linha %d e coluna %d" %(line,row))
+            
         self.visitChildren(ctx)
         return
 
@@ -270,16 +277,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitExpression(self, ctx:GrammarParser.ExpressionContext):
         list_exp = ctx.expression()
 
-        if len(list_exp)>1:
-
+        if len(list_exp) > 1:
             type_0 = self.visit(list_exp[0])
             type_1 = self.visit(list_exp[1])
 
-            if (type_0 == Type.FLOAT and type_1==Type.INT) or (type_1 == Type.FLOAT and type_0==Type.INT):
+            if (type_0 == Type.FLOAT and type_1 == Type.INT) or (type_1 == Type.FLOAT and type_0 == Type.INT):
                 return Type.FLOAT
 
-            if (type_0 == Type.VOID or type_1 == Type.VOID):
+            if type_0 == Type.VOID or type_1 == Type.VOID:
                 return Type.VOID
+        
+        elif len(list_exp) == 1:
+            tyype = self.visit(list_exp[0])
+            return tyype
 
         return self.visitChildren(ctx)
 
