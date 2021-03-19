@@ -112,17 +112,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         for i in range(len(ctx.identifier())): # para cada expressão que este nó possui...
             
             name = ctx.identifier(i).getText()
-            exp = self.visit(ctx.expression(i))
-            self.ids_defined[name] = tyype, None, None
+            exp = ctx.expression(i)
 
-            if(tyype == Type.INT and exp == Type.FLOAT):
+            if exp is not None:
+            
+                type_exp = self.visit(exp)
+                self.ids_defined[name] = tyype, None, None
 
-                token = ctx.tyype().INT().getPayload()
-                line = token.line
-                row = token.column
+                if(tyype == Type.INT and type_exp == Type.FLOAT):
+
+                    token = ctx.tyype().INT().getPayload()
+                    line = token.line
+                    row = token.column
 
 
-                print("Warning na linha %d e coluna %d" %(line,row))
+                    print("Warning na linha %d e coluna %d" %(line,row))
         
         return 
 
@@ -131,14 +135,18 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitVariable_assignment(self, ctx:GrammarParser.Variable_assignmentContext):
         name = ctx.identifier().getText()
         tyype = self.ids_defined[name][0]  
-        exp = self.visit(ctx.expression())
-
-        if(tyype == Type.INT and exp == Type.FLOAT):
-            token = ctx.identifier().IDENTIFIER().getPayload()
-            line = token.line
-            row = token.column
-            print("Warning na linha %d e coluna %d" %(line,row))
         
+        exp = ctx.expression()
+
+        if exp is not None:
+            exp_visit = self.visit(exp)
+
+            if(tyype == Type.INT and exp == Type.FLOAT):
+                token = ctx.identifier().IDENTIFIER().getPayload()
+                line = token.line
+                row = token.column
+                print("Warning na linha %d e coluna %d" %(line,row))
+
         return
 
 

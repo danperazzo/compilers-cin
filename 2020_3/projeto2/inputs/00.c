@@ -6,9 +6,8 @@
 int main () {
 	// Test: int op int
 	// Should Pass
-	int num=1,m = 2;
+	int num=2,m=0.2,m=1;
 
-	num = 0.2;
-	
+	num++;
 	return 0;
 }
