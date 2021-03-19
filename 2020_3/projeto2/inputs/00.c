@@ -2,17 +2,14 @@
 
 // Test: return int
 // Should Pass
-void test() {
 
-}
 
 int main () {
 	// Test: int op int
 	// Should Pass
 	int b = 1;
-	float c;
+	float c = 1.0;
 
-	int a = c;
+	b = 1 + c ;
 
-	return 0;
 }

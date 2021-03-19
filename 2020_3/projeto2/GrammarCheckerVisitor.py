@@ -199,7 +199,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             if exp is not None:
                 type_exp = self.visit(exp)
 
-                if tyype == Type.INT and exp == Type.FLOAT:
+                if tyype.getText() == Type.INT and type_exp == Type.FLOAT:
                     token = tyype.INT().getPayload()
                     line = token.line
                     row = token.column
@@ -255,7 +255,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitArray(self, ctx:GrammarParser.ArrayContext):
 
         tyype = self.visit(ctx.expression())
-        print(tyype)
+        if tyype != Type.INT:
+
+            token = ctx.identifier().IDENTIFIER().getPayload()
+
+            line = token.line
+            row = token.column
+            print("ERROR de index not integer: na linha %d e coluna %d" %(line,row))
+            
 
         return self.visitChildren(ctx)
 
