@@ -72,7 +72,20 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#statement.
     def visitStatement(self, ctx:GrammarParser.StatementContext):
-        return self.visitChildren(ctx)
+
+        if ctx.RETURN() is not None:
+            name = self.inside_what_function
+            tyype = self.ids_defined[name][0]
+
+            if tyype == Type.VOID:
+
+                token = ctx.RETURN().getPayload()
+                line = token.line
+                row = token.column
+                print("ERROR: na linha %d e coluna %d" %(line,row))
+       
+        self.visitChildren(ctx)
+        return
 
 
     # Visit a parse tree produced by GrammarParser#if_statement.
@@ -110,7 +123,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         
         tyype = ctx.tyype()
 
-        if (tyype.getText() == Type.VOID):
+        if tyype.getText() == Type.VOID:
             token = tyype.VOID().getPayload()
             line = token.line
             row = token.column
@@ -173,6 +186,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         tyype = self.ids_defined[name][0]  
         
         exp = ctx.expression()
+        
         if exp is not None:
             type_exp = self.visit(exp)
 
