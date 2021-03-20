@@ -58,10 +58,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         tyype = ctx.tyype().getText()
         name = ctx.identifier().getText()
         params = self.visit(ctx.arguments())
+
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
-
         return
 
 
@@ -169,13 +169,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 type_exp = self.visit(exp)
 
                 if type_exp == Type.INT:
-                    size = int(exp.getText())
-                    self.ids_defined[name] = tyype, size, None
+                    # size = int(exp.getText())
+                    self.ids_defined[name] = tyype, None, None
                 else:
-                    if type_exp == Type.FLOAT:
-                        token = exp.floating().FLOATING().getPayload()
-                    else:
-                        token = exp.string().STRING().getPayload()
+                    token = ctx.array(i).identifier().IDENTIFIER().getPayload()
+                    # if type_exp == Type.FLOAT:
+                    #     token = exp.floating().FLOATING().getPayload()
+                    # else:
+                    #     token = exp.string().STRING().getPayload()
                         
                     line = token.line
                     row = token.column
@@ -189,24 +190,27 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         type_array_literal = self.visit(array_literal.expression(idx))
 
                         if tyype == Type.INT and type_array_literal == Type.FLOAT:
-                            token = array_literal.expression(idx)
+                            # token = array_literal.expression(idx)
                             
-                            if token.floating() is None:
-                                token = token.expression(0)
+                            # if token.floating() is None:
+                            #     token = token.expression(0)
                             
-                            token = token.floating().FLOATING().getPayload()
+                            # token = token.floating().FLOATING().getPayload()
+                            token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
 
                         elif (tyype == Type.INT or tyype == Type.FLOAT) and type_array_literal == Type.STRING:
-                            token = array_literal.expression(idx).string().STRING().getPayload()
+                            # token = array_literal.expression(idx).string().STRING().getPayload()
+                            token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
 
                         elif type_array_literal == Type.VOID:
-                            token = array_literal.expression(idx).function_call().identifier().IDENTIFIER().getPayload()
+                            token = ctx.array(i).identifier().IDENTIFIER().getPayload()
+                            # token = array_literal.expression(idx).function_call().identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
@@ -221,6 +225,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             idx = None
         else:
             identifier = ctx.array().identifier()
+
             idx = int(ctx.array().expression().getText())
         name = identifier.getText()
 
