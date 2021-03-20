@@ -335,12 +335,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         elif ctx.array() is not None:
             
             name = ctx.array().identifier().getText()
+            
+            tyype = None
 
             if name in self.ids_defined.keys():
                 tyype = self.ids_defined[name][0]
-                return tyype
+
             else:
-                return None
+
+                token = ctx.array().identifier().IDENTIFIER().getPayload()
+                line = token.line
+                row = token.column
+                print("ERROR: undefined array '%s' in line %d and column %d" %(name,line,row))
+            
+            self.visit(ctx.array())
+            return tyype
 
         return self.visitChildren(ctx)
 
@@ -356,7 +365,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
             line = token.line
             row = token.column
-            print("ERROR de index not integer: na linha %d e coluna %d" %(line,row))
+            print("ERROR: array expression must be an integer, but it is %s in line %d and column %d" %(tyype,line,row))
             
 
         return self.visitChildren(ctx)
