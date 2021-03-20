@@ -72,6 +72,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#statement.
     def visitStatement(self, ctx:GrammarParser.StatementContext):
+        
+        self.visitChildren(ctx)
+        
         if ctx.RETURN() is not None:
             name = self.inside_what_function
             tyype = self.ids_defined[name][0]
@@ -103,10 +106,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     line = token.line
                     row = token.column
                     print("ERRO de tipos diferentes de variaveis de retorno: na linha %d e coluna %d" %(line,row))
-                
-                
-            
-        self.visitChildren(ctx)
+
         return
 
 
@@ -381,7 +381,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 token = identifier.IDENTIFIER().getPayload()
                 line = token.line
                 row = token.column
-                print("ERROR de mais parametros do que devia: na linha %d e coluna %d" %(line,row))
+                print("ERROR: incorrect number of parameters for function '%s' in line %d and column %d. Expecting %d, but %d were given" %(name,line,row,len(params_types),len(exprs)))
             else:
                 for idx,exp in enumerate(exprs):
                     type_exp = self.visit(exp)

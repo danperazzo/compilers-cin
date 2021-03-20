@@ -9,5 +9,5 @@ ERROR: trying to assign 'char *' expression to variable 'kik' in line 47 and col
 ERROR: trying to assign 'char *' expression to variable 'v' in line 48 and column 1
 ERROR: trying to initialize 'char *' expression to 'int' array 'kkkk' at index 1 of array literal in line 49 and column 5
 WARNING: possible loss of information initializing float expression to int array 'kkkk' at index 2 of array literal in line 49 and column 5
+ERROR: incorrect number of parameters for function 'scalar' in line 51 and column 8. Expecting 2, but 3 were given
 ERROR: trying to return a non void expression from void function 'main' in line 51 and column 1
-ERROR de mais parametros do que devia: na linha 51 e coluna 8
