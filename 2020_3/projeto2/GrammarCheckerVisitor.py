@@ -80,7 +80,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 token = ctx.RETURN().getPayload()
                 line = token.line
                 row = token.column
-                print("ERROR VOID retornando not VOID: na linha %d e coluna %d" %(line,row))
+                print( "ERROR: trying to return a non void expression from void function '%s' in line %d and column %d" %(name,line,row))
                 
             else:
                 type_exp = self.visit(ctx.expression())
@@ -89,7 +89,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = ctx.RETURN().getPayload()
                     line = token.line
                     row = token.column
-                    print("ERROR retornou VOID: na linha %d e coluna %d" %(line,row))
+                    print("ERROR: trying to return void expression from function '%s' in line %d and column %d" %(name,line,row))
 
                 elif type_exp != tyype:
                     token = ctx.RETURN().getPayload()
@@ -157,7 +157,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("WARNING: na linha %d e coluna %d" %(line,row))
+                        print("WARNING: possible loss of information assigning float expression to int variable '%s' in line %d and column %d" %(name,line,row))
 
                     elif (tyype == Type.INT or tyype == Type.FLOAT) and type_exp == Type.STRING:
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
@@ -169,7 +169,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                        print("ERROR: trying to assign 'void' expression to variable '%s' in line %d and column %d" %(name,line,row))
             
             for i in range(len(ctx.array())): # para cada array/array_list que este nó possui...
                 array = ctx.array(i)
@@ -243,7 +243,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             token = identifier.IDENTIFIER().getPayload()
             line = token.line
             row = token.column
-            print("ERROR not defined: na linha %d e coluna %d" %(line,row))
+            print("ERROR: undefined variable '%s' in line %d and column %d" %(name,line,row))
 
         else:
             
@@ -267,7 +267,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     # if idx is not None:
                     #     print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
                     # else:
-                    print("WARNING: na linha %d e coluna %d" %(line,row))
+                    print("WARNING: possible loss of information assigning float expression to int variable '%s' in line %d and column %d" %(name,line,row))
 
                 elif (tyype == Type.INT or tyype == Type.FLOAT) and type_exp == Type.STRING:
                     # if exp.string() is not None:
@@ -355,12 +355,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 for idx,exp in enumerate(exprs):
                     type_exp = self.visit(exp)
 
-                    if not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
+                    if  (params_types[idx] == Type.INT and type_exp == Type.FLOAT):
+                        
+                        token = identifier.IDENTIFIER().getPayload()
+                        line = token.line
+                        row = token.column
+                        print("WARNING: possible loss of information converting float expression to int expression in parameter 0 of function '%s' in line %d and column %d" %(name,line,row))
+                        break    
+
+                    elif not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
                         token = identifier.IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
                         print("ERROR de tipo de argumento: na linha %d e coluna %d" %(line,row))
                         break
+
            
             return tyype
         else:
