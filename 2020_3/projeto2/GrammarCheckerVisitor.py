@@ -222,7 +222,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
-                            print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
+                            print("ERROR: trying to initialize 'char *' expression to '%s' array '%s' at index %d of array literal in line %d and column %d" % (tyype,name,idx,line, row))
 
                         elif type_array_literal == Type.VOID:
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
