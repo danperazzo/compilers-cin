@@ -304,11 +304,25 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             if type_0 == Type.FLOAT or type_1 == Type.FLOAT:
                 return Type.FLOAT
 
-            if type_0 == Type.VOID or type_1 == Type.VOID:
-                return Type.VOID
+            elif type_0 == Type.VOID or type_1 == Type.VOID:
+                
+                operation = ctx.OP.text
+                token = ctx.OP
+                line = token.line
+                row = token.column
+                print("ERROR: binary operator '%s' used on type void in line %d and column %d" %(operation,line,row))
+                return None
+
+            elif type_0 == None  or type_1 == None:
+                return None
+
         
         elif len(list_exp) == 1:
             tyype = self.visit(list_exp[0])
+            
+            if tyype == Type.VOID:
+                return None
+            
             return tyype
 
         return self.visitChildren(ctx)
