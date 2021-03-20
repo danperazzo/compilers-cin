@@ -222,11 +222,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitVariable_assignment(self, ctx:GrammarParser.Variable_assignmentContext):
         if ctx.identifier() is not None:
             identifier = ctx.identifier() 
-            idx = None
+            # idx = None
         else:
             identifier = ctx.array().identifier()
-
-            idx = int(ctx.array().expression().getText())
+            # idx = int(ctx.array().expression().getText())
         name = identifier.getText()
 
         if name not in self.ids_defined.keys():
@@ -249,10 +248,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
-                    if idx is not None:
-                        print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
-                    else:
-                        print("WARNING: na linha %d e coluna %d" %(line,row))
+                    # if idx is not None:
+                    #     print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                    # else:
+                    print("WARNING: na linha %d e coluna %d" %(line,row))
 
                 elif (tyype == Type.INT or tyype == Type.FLOAT) and type_exp == Type.STRING:
                     # if exp.string() is not None:
@@ -261,19 +260,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
-                    if idx is not None:
-                        print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
-                    else:
-                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                    # if idx is not None:
+                    #     print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
+                    # else:
+                    print("ERROR: na linha %d e coluna %d" %(line,row))
                 
                 elif type_exp == Type.VOID:
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
-                    if idx is not None:
-                        print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
-                    else:
-                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                    # if idx is not None:
+                    #     print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
+                    # else:
+                    print("ERROR: na linha %d e coluna %d" %(line,row))
 
         return
 
@@ -286,7 +285,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             type_0 = self.visit(list_exp[0])
             type_1 = self.visit(list_exp[1])
 
-            if (type_0 == Type.FLOAT and type_1 == Type.INT) or (type_1 == Type.FLOAT and type_0 == Type.INT):
+            if type_0 == Type.FLOAT or type_1 == Type.FLOAT:
                 return Type.FLOAT
 
             if type_0 == Type.VOID or type_1 == Type.VOID:
@@ -328,17 +327,24 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
-            params_types = self.ids_defined[name][1]
+            params_types = list(self.ids_defined[name][1].values())
 
-            for idx,exp in enumerate(ctx.expression()):
-                type_exp = self.visit(exp)
+            exprs = ctx.expression()
+            if len(params_types) != len(exprs):
+                token = identifier.IDENTIFIER().getPayload()
+                line = token.line
+                row = token.column
+                print("ERROR de mais parametros do que devia: na linha %d e coluna %d" %(line,row))
+            else:
+                for idx,exp in enumerate(exprs):
+                    type_exp = self.visit(exp)
 
-                if not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
-                    token = identifier.IDENTIFIER().getPayload()
-                    line = token.line
-                    row = token.column
-                    print("ERROR de tipo de argumento: na linha %d e coluna %d" %(line,row))
-                    break
+                    if not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
+                        token = identifier.IDENTIFIER().getPayload()
+                        line = token.line
+                        row = token.column
+                        print("ERROR de tipo de argumento: na linha %d e coluna %d" %(line,row))
+                        break
            
             return tyype
         else:
@@ -352,17 +358,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#arguments.
     def visitArguments(self, ctx:GrammarParser.ArgumentsContext):
-        params_types = []
+        params_types = {}
         
         for i in range(len(ctx.tyype())):
             tyype = ctx.tyype(i)
             identifier = ctx.identifier(i)
             name = identifier.getText()
 
-            params_types.append(tyype.getText())
-
-            if name not in self.ids_defined.keys():
-                self.ids_defined[name] = tyype, None, None
+            if name not in params_types.keys():
+                params_types[name] = tyype.getText()
 
         return params_types
 
@@ -389,8 +393,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#identifier.
     def visitIdentifier(self, ctx:GrammarParser.IdentifierContext):
+        tyype = None
+        function = self.inside_what_function
         name = ctx.getText()
-        tyype = self.ids_defined[name][0]
-        
+        if function in self.ids_defined.keys():
+            if name in self.ids_defined[function][1].keys():
+                tyype = self.ids_defined[function][1][name]
+            else:
+                if name in self.ids_defined.keys():
+                    tyype = self.ids_defined[name][0]
+
         return tyype
 
