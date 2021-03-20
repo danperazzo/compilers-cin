@@ -91,6 +91,13 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     row = token.column
                     print("ERROR: trying to return void expression from function '%s' in line %d and column %d" %(name,line,row))
 
+                elif type_exp == Type.FLOAT and tyype == Type.INT:
+
+                    token = ctx.RETURN().getPayload()
+                    line = token.line
+                    row = token.column
+                    print("WARNING: possible loss of information returning float expression from int function '%s' in line %d and column %d" %(name,line,row))
+
                 elif type_exp != tyype:
                     token = ctx.RETURN().getPayload()
                     line = token.line
@@ -325,6 +332,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             return tyype
 
+        elif ctx.array() is not None:
+            
+            name = ctx.array().identifier().getText()
+
+            if name in self.ids_defined.keys():
+                tyype = self.ids_defined[name][0]
+                return tyype
+            else:
+                return None
+
         return self.visitChildren(ctx)
 
 
@@ -374,15 +391,13 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         token = identifier.IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("WARNING: possible loss of information converting float expression to int expression in parameter 0 of function '%s' in line %d and column %d" %(name,line,row))
-                        break    
+                        print("WARNING: possible loss of information converting float expression to int expression in parameter 0 of function '%s' in line %d and column %d" %(name,line,row))    
 
                     elif not (params_types[idx] == Type.FLOAT and type_exp == Type.INT) and params_types[idx] != type_exp :
                         token = identifier.IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("ERROR de tipo de argumento: na linha %d e coluna %d" %(line,row))
-                        break
+                        print("ERROR como aqui de tipo de argumento: na linha %d e coluna %d e tipo %s e %s" %(line,row,params_types[idx],type_exp))
 
            
             return tyype
