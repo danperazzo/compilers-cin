@@ -2,12 +2,12 @@ WARNING: possible loss of information assigning float expression to int variable
 WARNING: possible loss of information returning float expression from int function 'scalar' in line 30 and column 1
 WARNING: possible loss of information converting float expression to int expression in parameter 0 of function 'scalar' in line 38 and column 10
 WARNING: possible loss of information assigning float expression to int variable 'valor1' in line 38 and column 1
-WARNING: na linha 40, coluna 5 e index 3
+WARNING: possible loss of information initializing float expression to int array 'ai' at index 3 of array literal in line 40 and column 5
 WARNING: possible loss of information assigning float expression to int variable 'k' in line 41 and column 5
-ERROR: na linha 46 e coluna 5
-ERROR: na linha 47 e coluna 7
-ERROR: na linha 48 e coluna 1
+ERROR: trying to assign 'char *' expression to variable 'v' in line 46 and column 5
+ERROR: trying to assign 'char *' expression to variable 'kik' in line 47 and column 7
+ERROR: trying to assign 'char *' expression to variable 'v' in line 48 and column 1
 ERROR: na linha 49, coluna 5 e index 1
-WARNING: na linha 49, coluna 5 e index 2
+WARNING: possible loss of information initializing float expression to int array 'kkkk' at index 2 of array literal in line 49 and column 5
 ERROR: trying to return a non void expression from void function 'main' in line 51 and column 1
 ERROR de mais parametros do que devia: na linha 51 e coluna 8

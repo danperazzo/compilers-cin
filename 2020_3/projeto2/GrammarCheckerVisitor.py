@@ -170,7 +170,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
                         line = token.line
                         row = token.column
-                        print("ERROR: na linha %d e coluna %d" %(line,row))
+                        print("ERROR: trying to assign 'char *' expression to variable '%s' in line %d and column %d" %(name,line,row))
 
                     elif type_exp == Type.VOID:
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
@@ -215,7 +215,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
-                            print("WARNING: na linha %d, coluna %d e index %d" % (line, row, idx))
+                            print("WARNING: possible loss of information initializing float expression to int array '%s' at index %d of array literal in line %d and column %d" % (name,idx,line, row))
 
                         elif (tyype == Type.INT or tyype == Type.FLOAT) and type_array_literal == Type.STRING:
                             # token = array_literal.expression(idx).string().STRING().getPayload()
@@ -286,7 +286,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     # if idx is not None:
                     #     print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
                     # else:
-                    print("ERROR: na linha %d e coluna %d" %(line,row))
+                    print("ERROR: trying to assign 'char *' expression to variable '%s' in line %d and column %d" %(name,line,row))
                 
                 elif type_exp == Type.VOID:
                     token = identifier.IDENTIFIER().getPayload()
