@@ -7,7 +7,7 @@
 int unum = 1;
 
 float half (float x) {
-	return x / 2;:
+	return x / 2;
 }
 
 int scalar (int a, int b) {

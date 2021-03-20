@@ -80,7 +80,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 token = ctx.RETURN().getPayload()
                 line = token.line
                 row = token.column
-                print("ERROR: na linha %d e coluna %d" %(line,row))
+                print("ERROR VOID retornando not VOID: na linha %d e coluna %d" %(line,row))
+                
             else:
                 type_exp = self.visit(ctx.expression())
 
@@ -88,7 +89,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = ctx.RETURN().getPayload()
                     line = token.line
                     row = token.column
-                    print("ERROR: na linha %d e coluna %d" %(line,row))
+                    print("ERROR retornou VOID: na linha %d e coluna %d" %(line,row))
+
+                elif type_exp != tyype:
+                    token = ctx.RETURN().getPayload()
+                    line = token.line
+                    row = token.column
+                    print("ERRO de tipos diferentes de variaveis de retorno: na linha %d e coluna %d" %(line,row))
+                
+                
             
         self.visitChildren(ctx)
         return
@@ -227,15 +236,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             identifier = ctx.array().identifier()
             # idx = int(ctx.array().expression().getText())
         name = identifier.getText()
+        function = self.inside_what_function
 
-        if name not in self.ids_defined.keys():
+        if (name not in self.ids_defined.keys() 
+            and name not in self.ids_defined[function][1].keys()):
             token = identifier.IDENTIFIER().getPayload()
             line = token.line
             row = token.column
-            print("ERROR: na linha %d e coluna %d" %(line,row))
+            print("ERROR not defined: na linha %d e coluna %d" %(line,row))
 
         else:
-            tyype = self.ids_defined[name][0]  
+            
+            if name in self.ids_defined.keys():
+                tyype = self.ids_defined[name][0] 
+            else:
+                tyype = self.ids_defined[function][1][name]
+                
             exp = ctx.expression()
             
             if exp is not None:
