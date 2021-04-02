@@ -158,7 +158,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 self.ids_defined[name] = tyype, None, None
 
                 if exp is not None:
-                    type_exp = self.visit(exp)
+                    type_exp, val = self.visit(exp)
+                    self.ids_defined[name] = tyype, val, None
 
                     if tyype == Type.INT and type_exp == Type.FLOAT:
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
@@ -245,7 +246,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             exp = ctx.expression()
             
             if exp is not None:
-                type_exp = self.visit(exp)
+                type_exp,val = self.visit(exp)
+                self.ids_defined[name] = tyype, val, None
 
                 if tyype == Type.INT and type_exp == Type.FLOAT:
                     token = identifier.IDENTIFIER().getPayload()
@@ -307,7 +309,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 return Type.FLOAT, val_ret
 
             
-            
+            expression = str(val_0) + " " + operation + " " + str(val_1) 
+            print("line %d Expression %s simplified to: %d" %(line, expression, val_ret))
             return type_0, val_ret 
         
         elif len(list_exp) == 1:
@@ -450,5 +453,5 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if name in self.ids_defined.keys():
                     tyype = self.ids_defined[name][0]
 
-        return tyype
+        return tyype, self.ids_defined[name][1] 
 
