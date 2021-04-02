@@ -19,6 +19,8 @@ def resolve_expr(val_0,val_1,operation, line):
             val_ret = val_0 * val_1
         elif operation == '/':
             val_ret = val_0 / val_1
+        else:
+            return None
             
         expression = str(val_0) + " " + operation + " " + str(val_1) 
 
@@ -39,6 +41,7 @@ class Type:
 class GrammarCheckerVisitor(ParseTreeVisitor):
     ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
     inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
+    inside_bifurcation = False
 
     # Visit a parse tree produced by GrammarParser#fiile.
     def visitFiile(self, ctx:GrammarParser.FiileContext):
@@ -104,8 +107,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#if_statement.
     def visitIf_statement(self, ctx:GrammarParser.If_statementContext):
-        return self.visitChildren(ctx)
 
+        self.visit(ctx.expression())
+        self.inside_bifurcation = True
+
+        try:
+            self.visit(ctx.body())
+        except:
+            self.visit(ctx.statement())
+
+        try:   
+            self.visit(ctx.else_statement())
+        except:
+            pass
+
+        self.inside_bifurcation = False
+        return
 
     # Visit a parse tree produced by GrammarParser#else_statement.
     def visitElse_statement(self, ctx:GrammarParser.Else_statementContext):
@@ -293,8 +310,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             return type_0, val_ret 
         
         elif len(list_exp) == 1:
+
             tyype, val = self.visit(list_exp[0])
+
+            operation = ctx.OP.text
+            token = ctx.OP
+            line = token.line
             
+            if operation == "-":
+                expression = operation + " " + str(val) 
+                val = - val
+                if type(val) == float:
+                    print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
+                else:
+                    print("line %d Expression %s simplified to: %d" %(line, expression, val))
+
             if tyype == Type.VOID:
                 return None, None
             
@@ -433,6 +463,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if name in self.ids_defined.keys():
                     tyype = self.ids_defined[name][0]
                     val = self.ids_defined[name][1] 
+        
+        if self.inside_bifurcation:
+            val = None
 
         return tyype, val
 
