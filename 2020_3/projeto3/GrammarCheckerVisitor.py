@@ -5,45 +5,37 @@ if __name__ is not None and "." in __name__:
 else:
     from GrammarParser import GrammarParser
 
-# This class defines a complete generic visitor for a parse tree produced by GrammarParser.
 
-'''
-COMO RESGATAR INFORMAÇÕES DA ÁRVORE
+def resolve_expr(val_0,val_1,operation, line):
 
-Observe o seu Grammar.g4. Cada regra sintática gera uma função com o nome corespondente no Visitor e na ordem em que está na gramática.
+        if val_0 is None or val_1 is None:
+            return None
+        
+        if operation == '+':
+            val_ret = val_0 + val_1
+        elif operation == '-':
+            val_ret = val_0 - val_1
+        elif operation == '*':
+            val_ret = val_0 * val_1
+        elif operation == '/':
+            val_ret = val_0 / val_1
+            
+        expression = str(val_0) + " " + operation + " " + str(val_1) 
 
-Se for utilizar sua gramática do projeto 1, por causa de conflitos com Python, substitua as regras file por fiile e type por tyype. Use prints temporários para ver se está no caminho certo.  
-"make tree" agora desenha a árvore sintática, se quiser vê-la para qualquer input, enquanto "make" roda este visitor sobre o a árvore gerada a partir de Grammar.g4 alimentada pelo input.
-
-Exemplos:  
-
-# Obs.: Os exemplos abaixo utilizam nós 'expression', mas servem apra qualquer tipo de nó
-
-self.visitChildren(ctx) # visita todos os filhos do nó atual
-expr = self.visit(ctx.expression())  # visita a subárvore do nó expression e retorna o valor retornado na função "visitRegra"
-
-for i in range(len(ctx.expression())): # para cada expressão que este nó possui...
-    ident = ctx.expression(i) # ...pegue a i-ésima expressão
-
-
-if ctx.FLOAT() != None: # se houver um FLOAT (em vez de INT ou VOID) neste nó (parser)
-    return Type.FLOAT # retorne tipo float
-
-ctx.identifier().getText()  # Obtém o texto contido no nó (neste caso, será obtido o nome do identifier)
-
-token = ctx.identifier(i).IDENTIFIER().getPayload() # Obtém o token referente à uma determinada regra léxica (neste caso, IDENTIFIER)
-token.line      # variável com a linha do token
-token.column    # variável com a coluna do token
-'''
+        if type(val_ret) == float:
+            print("line %d Expression %s simplified to: %.1f" %(line, expression, val_ret))
+        else:
+            print("line %d Expression %s simplified to: %d" %(line, expression, val_ret))
+        return val_ret
 
 
-# Dica: Retorne Type.INT, Type.FLOAT, etc. Nos nós e subnós das expressões para fazer a checagem de tipos enquanto percorre a expressão.
 class Type:
     VOID = "void"
     INT = "int"
     FLOAT = "float"
     STRING = "char *"
 
+# This class defines a complete generic visitor for a parse tree produced by GrammarParser.
 class GrammarCheckerVisitor(ParseTreeVisitor):
     ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
     inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
@@ -72,9 +64,6 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#statement.
     def visitStatement(self, ctx:GrammarParser.StatementContext):
-        
-        self.visitChildren(ctx)
-        
         if ctx.RETURN() is not None:
             name = self.inside_what_function
             tyype = self.ids_defined[name][0]
@@ -86,7 +75,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print( "ERROR: trying to return a non void expression from void function '%s' in line %d and column %d" %(name,line,row))
                 
             else:
-                type_exp = self.visit(ctx.expression())
+                type_exp, _ = self.visit(ctx.expression())
 
                 if type_exp == Type.VOID:
                     token = ctx.RETURN().getPayload()
@@ -107,6 +96,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     row = token.column
                     print("ERRO de tipos diferentes de variaveis de retorno: na linha %d e coluna %d" %(line,row))
 
+        else:
+            self.visitChildren(ctx)
+            
         return
 
 
@@ -183,7 +175,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 array = ctx.array(i)
                 name = array.identifier().getText()
                 exp = array.expression()
-                type_exp = self.visit(exp)
+                type_exp, _ = self.visit(exp)
 
                 if type_exp == Type.INT:
                     self.ids_defined[name] = tyype, None, None
@@ -198,7 +190,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if array_literal is not None:
 
                     for idx in range(len(array_literal.expression())):
-                        type_array_literal = self.visit(array_literal.expression(idx))
+                        type_array_literal, _ = self.visit(array_literal.expression(idx))
 
                         if tyype == Type.INT and type_array_literal == Type.FLOAT:
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
@@ -271,7 +263,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
         return
 
-
+        
     # Visit a parse tree produced by GrammarParser#expression.
     def visitExpression(self, ctx:GrammarParser.ExpressionContext):
         list_exp = ctx.expression()
@@ -284,16 +276,6 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             token = ctx.OP
             line = token.line
 
-            if operation == '+':
-                val_ret = val_0 + val_1
-            elif operation == '-':
-                val_ret = val_0 - val_1
-            elif operation == '*':
-                val_ret = val_0 * val_1
-            elif operation == '/':
-                val_ret = val_0 / val_1
-
-
             if type_0 == Type.VOID or type_1 == Type.VOID:
                 row = token.column
 
@@ -303,14 +285,11 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             elif type_0 == None  or type_1 == None:
                 return None, None
 
-            elif type_0 == Type.FLOAT or type_1 == Type.FLOAT:
-                expression = str(val_0) + " " + operation + " " + str(val_1) 
-                print("line %d Expression %s simplified to: %.1f" %(line, expression, val_ret))
+            val_ret = resolve_expr(val_0,val_1,operation, line)
+            
+            if type_0 == Type.FLOAT or type_1 == Type.FLOAT:
                 return Type.FLOAT, val_ret
 
-            
-            expression = str(val_0) + " " + operation + " " + str(val_1) 
-            print("line %d Expression %s simplified to: %d" %(line, expression, val_ret))
             return type_0, val_ret 
         
         elif len(list_exp) == 1:
@@ -344,7 +323,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by GrammarParser#array.
     def visitArray(self, ctx:GrammarParser.ArrayContext):
         exp = ctx.expression()
-        tyype = self.visit(exp)
+        tyype, _ = self.visit(exp)
 
         if tyype != Type.INT:
             token = ctx.identifier().IDENTIFIER().getPayload()
@@ -368,7 +347,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
-            params_types = list(self.ids_defined[name][1].values())
+            params_types = [param[0] for param in list(self.ids_defined[name][1].values())]
 
             exprs = ctx.expression()
             if len(params_types) != len(exprs):
@@ -379,7 +358,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print("ERROR: incorrect number of parameters for function '%s' in line %d and column %d. Expecting %d, but %d were given" %(name,line,row,len(params_types),len(exprs)))
             else:
                 for idx,exp in enumerate(exprs):
-                    type_exp = self.visit(exp)
+                    type_exp, _ = self.visit(exp)
 
                     if  (params_types[idx] == Type.INT and type_exp == Type.FLOAT):
                         token = identifier.IDENTIFIER().getPayload()
@@ -416,7 +395,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             name = identifier.getText()
 
             if name not in params_types.keys():
-                params_types[name] = tyype.getText()
+                params_types[name] = tyype.getText(), None
 
         return params_types
 
@@ -446,12 +425,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         tyype = None
         function = self.inside_what_function
         name = ctx.getText()
+        val = None
         if function in self.ids_defined.keys():
             if name in self.ids_defined[function][1].keys():
-                tyype = self.ids_defined[function][1][name]
+                tyype = self.ids_defined[function][1][name][0]
             else:
                 if name in self.ids_defined.keys():
                     tyype = self.ids_defined[name][0]
+                    val = self.ids_defined[name][1] 
 
-        return tyype, self.ids_defined[name][1] 
+        return tyype, val
 
