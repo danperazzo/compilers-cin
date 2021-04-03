@@ -99,6 +99,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     row = token.column
                     print("ERRO de tipos diferentes de variaveis de retorno: na linha %d e coluna %d" %(line,row))
 
+        elif ctx.if_statement() is not None:
+            self.visit(ctx.if_statement())
+
         else:
             self.visitChildren(ctx)
             
@@ -111,16 +114,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         self.visit(ctx.expression())
         self.inside_bifurcation = True
 
-        try:
-            self.visit(ctx.body())
-        except:
+        if ctx.statement() is not None:
             self.visit(ctx.statement())
 
-        try:   
-            self.visit(ctx.else_statement())
-        except:
-            pass
+        else:
+            self.visit(ctx.body())
 
+        if ctx.else_statement() is not None:
+            self.visit(ctx.else_statement())
+        
         self.inside_bifurcation = False
         return
 
@@ -168,6 +170,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                 if exp is not None:
                     type_exp, val = self.visit(exp)
+
+                    if self.inside_bifurcation:
+                        val = None
+
                     self.ids_defined[name] = tyype, val, None
 
                     if tyype == Type.INT and type_exp == Type.FLOAT:
@@ -256,6 +262,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             if exp is not None:
                 type_exp,val = self.visit(exp)
+                
+                if self.inside_bifurcation:
+                    val = None
+                
                 self.ids_defined[name] = tyype, val, None
 
                 if tyype == Type.INT and type_exp == Type.FLOAT:
@@ -464,8 +474,6 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     tyype = self.ids_defined[name][0]
                     val = self.ids_defined[name][1] 
         
-        if self.inside_bifurcation:
-            val = None
 
         return tyype, val
 
