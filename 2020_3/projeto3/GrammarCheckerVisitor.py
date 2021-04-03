@@ -53,7 +53,7 @@ class Type:
 class GrammarCheckerVisitor(ParseTreeVisitor):
     ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
     inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
-    inside_bifurcation = False
+    inside_bifurcation = 0
 
     # Visit a parse tree produced by GrammarParser#fiile.
     def visitFiile(self, ctx:GrammarParser.FiileContext):
@@ -124,18 +124,21 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitIf_statement(self, ctx:GrammarParser.If_statementContext):
 
         self.visit(ctx.expression())
-        self.inside_bifurcation = True
 
         if ctx.statement() is not None:
+            
+            self.inside_bifurcation = self.inside_bifurcation + 1 
             self.visit(ctx.statement())
+            self.inside_bifurcation = self.inside_bifurcation - 1
 
         else:
+            self.inside_bifurcation = self.inside_bifurcation + 1
             self.visit(ctx.body())
+            self.inside_bifurcation = self.inside_bifurcation - 1
 
         if ctx.else_statement() is not None:
             self.visit(ctx.else_statement())
         
-        self.inside_bifurcation = False
         return
 
     # Visit a parse tree produced by GrammarParser#else_statement.
@@ -183,7 +186,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if exp is not None:
                     type_exp, val = self.visit(exp)
 
-                    if self.inside_bifurcation:
+                    if self.inside_bifurcation != 0:
                         val = None
 
                     self.ids_defined[name] = tyype, val, None
@@ -339,7 +342,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 operation = ctx.OP.text
                 token = ctx.OP
                 line = token.line
-                
+
                 if operation == "-":
                     expression = operation + " " + str(val) 
                     val = - val
