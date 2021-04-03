@@ -335,17 +335,18 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
             tyype, val = self.visit(list_exp[0])
 
-            operation = ctx.OP.text
-            token = ctx.OP
-            line = token.line
-            
-            if operation == "-":
-                expression = operation + " " + str(val) 
-                val = - val
-                if type(val) == float:
-                    print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
-                else:
-                    print("line %d Expression %s simplified to: %d" %(line, expression, val))
+            if ctx.OP is not None:
+                operation = ctx.OP.text
+                token = ctx.OP
+                line = token.line
+                
+                if operation == "-":
+                    expression = operation + " " + str(val) 
+                    val = - val
+                    if type(val) == float:
+                        print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
+                    else:
+                        print("line %d Expression %s simplified to: %d" %(line, expression, val))
 
             if tyype == Type.VOID:
                 return None, None
