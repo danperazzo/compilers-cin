@@ -16,4 +16,5 @@ line 13 Expression -644 * 38654 simplified to: -24893176
 line 13 Expression -32 + -24893176 simplified to: -24893208
 line 15 Expression 14 + 46 simplified to: 60
 line 15 Expression 60 + -644 simplified to: -584
+line 15 Expression -24893208 >= -584 simplified to: 0
 line 18 Expression 14 * 46 simplified to: 644

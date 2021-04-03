@@ -19,7 +19,19 @@ def resolve_expr(val_0,val_1,operation, line):
             val_ret = val_0 * val_1
         elif operation == '/':
             val_ret = val_0 / val_1
-        else:
+        elif operation == '>=':
+            val_ret = int(val_0 >= val_1)
+        elif operation == '<=':
+            val_ret = int(val_0 <= val_1)
+        elif operation == '>':
+            val_ret = int(val_0 > val_1)
+        elif operation == '<':
+            val_ret = int(val_0 < val_1)
+        elif operation == '==':
+            val_ret = int(val_0 == val_1)
+        elif operation == '!=':
+            val_ret = int(val_0 != val_1)
+        
             return None
             
         expression = str(val_0) + " " + operation + " " + str(val_1) 
