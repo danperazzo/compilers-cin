@@ -431,7 +431,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         print("ERROR como aqui de tipo de argumento: na linha %d e coluna %d e tipo %s e %s" %(line,row,params_types[idx],type_exp))
 
            
-            return tyype
+            return tyype, None
         else:
             token = identifier.IDENTIFIER().getPayload()
             line = token.line
