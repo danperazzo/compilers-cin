@@ -114,6 +114,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         elif ctx.if_statement() is not None:
             self.visit(ctx.if_statement())
 
+        elif ctx.for_loop() is not None:
+            self.visit(ctx.for_loop())
+
         else:
             self.visitChildren(ctx)
             
@@ -148,7 +151,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#for_loop.
     def visitFor_loop(self, ctx:GrammarParser.For_loopContext):
-        return self.visitChildren(ctx)
+        
+        self.inside_bifurcation = self.inside_bifurcation + 1 
+        self.visit(ctx.for_initializer())
+        self.visit(ctx.for_condition())
+        self.visit(ctx.for_step())
+
+        if ctx.statement() is not None:
+            
+            self.visit(ctx.statement())
+        
+        else:
+            self.visit(ctx.body())
+        
+        self.inside_bifurcation = self.inside_bifurcation - 1
+
+        return
 
 
     # Visit a parse tree produced by GrammarParser#for_initializer.

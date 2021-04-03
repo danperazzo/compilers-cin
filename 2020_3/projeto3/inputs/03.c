@@ -5,7 +5,7 @@
 
 // comment
 int unum = 1;
-
+// TEM QUE IGNORAR GLOBAL CONSTANTE
 
 
 int scalar (int a, int b) {
@@ -35,7 +35,7 @@ float pi = 3.14159265;
 int main () {
 	int quantas_trincas = 33, valor1 = 821;
 	int tk[3] = { -1, 0, 1 };
-	valor1 = scalar(quantas_trincas - tk[2], valor1) - (tk[0] + valor1);
+	scalar(quantas_trincas - tk[2], valor1) - (tk[0] + valor1);
 	return 0;
 }
 
