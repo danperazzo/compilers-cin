@@ -18,7 +18,10 @@ def resolve_expr(val_0,val_1,operation, line):
         elif operation == '*':
             val_ret = val_0 * val_1
         elif operation == '/':
-            val_ret = val_0 / val_1
+            if type(val_0) == int and type(val_1) == int:
+                val_ret = int(val_0 / val_1)
+            else:
+                val_ret = float(val_0 / val_1)
         elif operation == '>=':
             val_ret = int(val_0 >= val_1)
         elif operation == '<=':
@@ -42,6 +45,13 @@ def resolve_expr(val_0,val_1,operation, line):
             print("line %d Expression %s simplified to: %d" %(line, expression, val_ret))
         return val_ret
 
+def change_array_val(tuple_params, idx, new_val):
+    if tuple_params[2]:
+        return tuple_params
+    params = list(tuple_params)
+    params[1][idx] = new_val
+    new_tuple_params = tuple(params)
+    return new_tuple_params
 
 class Type:
     VOID = "void"
@@ -199,7 +209,12 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             for i in range(len(ctx.identifier())): # para cada identifier/expression que este nó possui...
                 name = ctx.identifier(i).getText()
                 exp = ctx.expression(i)
-                self.ids_defined[name] = tyype, None, None
+                
+                is_global = False
+                if self.inside_what_function == "":
+                    is_global = True
+                
+                self.ids_defined[name] = tyype, None, is_global
 
                 if exp is not None:
                     type_exp, val = self.visit(exp)
@@ -207,7 +222,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     if self.inside_bifurcation != 0:
                         val = None
 
-                    self.ids_defined[name] = tyype, val, None
+                    self.ids_defined[name] = tyype, val, is_global
 
                     if tyype == Type.INT and type_exp == Type.FLOAT:
                         token = ctx.identifier(i).IDENTIFIER().getPayload()
@@ -234,7 +249,13 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 type_exp, _ = self.visit(exp)
 
                 if type_exp == Type.INT:
-                    self.ids_defined[name] = tyype, None, None
+                    is_global = False
+                    if self.inside_what_function == "":
+                        is_global = True
+
+                    array_initializer = [None for i in range(int(exp.getText()))]
+                    self.ids_defined[name] = tyype, array_initializer, is_global
+
                 else:
                     token = ctx.array(i).identifier().IDENTIFIER().getPayload() 
                     line = token.line
@@ -246,26 +267,27 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if array_literal is not None:
 
                     for idx in range(len(array_literal.expression())):
-                        type_array_literal, _ = self.visit(array_literal.expression(idx))
+                        type_array_literal, val_exp = self.visit(array_literal.expression(idx))
 
                         if tyype == Type.INT and type_array_literal == Type.FLOAT:
+                            self.ids_defined[name] = change_array_val(self.ids_defined[name], idx, int(val_exp))
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("WARNING: possible loss of information initializing float expression to int array '%s' at index %d of array literal in line %d and column %d" % (name,idx,line, row))
-
                         elif (tyype == Type.INT or tyype == Type.FLOAT) and type_array_literal == Type.STRING:
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("ERROR: trying to initialize 'char *' expression to '%s' array '%s' at index %d of array literal in line %d and column %d" % (tyype,name,idx,line, row))
-
                         elif type_array_literal == Type.VOID:
                             token = ctx.array(i).identifier().IDENTIFIER().getPayload()
                             line = token.line
                             row = token.column
                             print("ERROR: na linha %d, coluna %d e index %d" % (line, row, idx))
-                    
+                        else:
+                            self.ids_defined[name] = change_array_val(self.ids_defined[name], idx, val_exp)
+                                        
         return 
 
 
@@ -273,8 +295,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitVariable_assignment(self, ctx:GrammarParser.Variable_assignmentContext):
         if ctx.identifier() is not None:
             identifier = ctx.identifier() 
+            array_idx = None
         else:
             identifier = ctx.array().identifier()
+            array_exp = ctx.array().expression().getText()
+            if array_exp in self.ids_defined:
+                array_idx = self.ids_defined[array_exp][1]
+            else:
+                array_idx = int(array_exp)
         name = identifier.getText()
         function = self.inside_what_function
 
@@ -288,20 +316,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         else:
             if name in self.ids_defined.keys():
                 tyype = self.ids_defined[name][0] 
+                is_global = self.ids_defined[name][2]
             else:
                 tyype = self.ids_defined[function][1][name]
+                is_global = False
                 
             exp = ctx.expression()
             
             if exp is not None:
+                error = False
                 type_exp,val = self.visit(exp)
                 
                 if self.inside_bifurcation:
                     val = None
-                
-                self.ids_defined[name] = tyype, val, None
 
                 if tyype == Type.INT and type_exp == Type.FLOAT:
+                    val = int(val)
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
@@ -311,6 +341,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
+                    error = True
 
                     print("ERROR: trying to assign 'char *' expression to variable '%s' in line %d and column %d" %(name,line,row))
                 
@@ -318,9 +349,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
+                    error = True
 
                     print("ERROR: na linha %d e coluna %d" %(line,row))
 
+                if not error:
+                    if array_idx is None:
+                        self.ids_defined[name] = tyype, val, is_global
+                    else:
+                        self.ids_defined[name] = change_array_val(self.ids_defined[name], array_idx, val)
         return
 
         
@@ -361,13 +398,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 token = ctx.OP
                 line = token.line
 
-                if operation == "-":
-                    expression = operation + " " + str(val) 
-                    val = - val
-                    if type(val) == float:
-                        print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
-                    else:
-                        print("line %d Expression %s simplified to: %d" %(line, expression, val))
+                if val is not None:
+                    if operation == "-":
+                        expression = operation + " " + str(val) 
+                        val = - val
+                        if type(val) == float:
+                            print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
+                        else:
+                            print("line %d Expression %s simplified to: %d" %(line, expression, val))
 
             if tyype == Type.VOID:
                 return None, None
@@ -375,11 +413,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             return tyype, val
 
         elif ctx.array() is not None:
+            val = None
             name = ctx.array().identifier().getText()
+            array_exp = ctx.array().expression().getText()
+            if array_exp in self.ids_defined:
+                array_idx = self.ids_defined[array_exp][1]
+            else:
+                array_idx = int(array_exp)
             tyype = None
 
             if name in self.ids_defined.keys():
                 tyype = self.ids_defined[name][0]
+                if not self.ids_defined[name][2]:
+                    val = self.ids_defined[name][1][array_idx]
 
             else:
                 token = ctx.array().identifier().IDENTIFIER().getPayload()
@@ -389,7 +435,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print("ERROR: undefined array '%s' in line %d and column %d" %(name,line,row))
             
             self.visit(ctx.array())
-            return tyype, None
+            return tyype, val
 
         return self.visitChildren(ctx)
 
@@ -497,17 +543,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     # Visit a parse tree produced by GrammarParser#identifier.
     def visitIdentifier(self, ctx:GrammarParser.IdentifierContext):
         tyype = None
+        val = None
         function = self.inside_what_function
         name = ctx.getText()
-        val = None
         if function in self.ids_defined.keys():
             if name in self.ids_defined[function][1].keys():
                 tyype = self.ids_defined[function][1][name][0]
             else:
                 if name in self.ids_defined.keys():
                     tyype = self.ids_defined[name][0]
-                    val = self.ids_defined[name][1] 
-        
-
+                    if not self.ids_defined[name][2]:
+                        val = self.ids_defined[name][1] 
+    
         return tyype, val
 
