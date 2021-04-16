@@ -382,10 +382,58 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             elif type_0 == None  or type_1 == None:
                 return None, None
 
+<<<<<<< HEAD
             val_ret = resolve_expr(val_0,val_1,operation, line)
             
             if type_0 == Type.FLOAT or type_1 == Type.FLOAT:
                 return Type.FLOAT, val_ret
+=======
+    # Visit a parse tree produced by GrammarParser#expression.
+    def visitExpression(self, ctx:GrammarParser.ExpressionContext):
+        tyype = Type.VOID
+        if len(ctx.expression()) == 0:
+
+            if ctx.integer() != None:
+                tyype = Type.INT
+
+            elif ctx.floating() != None:
+                tyype = Type.FLOAT
+
+            elif ctx.string() != None:
+                tyype = Type.STRING
+
+            elif ctx.identifier() != None:
+                name = ctx.identifier().getText()
+                try:
+                    tyype, _ = self.ids_defined[name]
+                except:
+                    token = ctx.identifier().IDENTIFIER().getPayload()
+                    print("ERROR: undefined variable '" + name + "' in line " + str(token.line) + " and column " + str(token.column))
+
+            elif ctx.array() != None:
+                name = ctx.array().identifier().getText()
+                tyype, array_length = 0, 0
+                try:
+                    tyype, array_length = self.ids_defined[name]
+                except:
+                    token = ctx.array().identifier().IDENTIFIER().getPayload()
+                    print("ERROR: undefined array '" + name + "' in line " + str(token.line) + " and column " + str(token.column))
+                self.visit(ctx.array())
+
+                #print("array index = " + str(array_index))
+
+            elif ctx.function_call() != None:
+                tyype = self.visit(ctx.function_call())
+
+        elif len(ctx.expression()) == 1:
+
+            if ctx.OP != None: #unary operators
+                text = ctx.OP.text
+                token = ctx.OP
+                tyype = self.visit(ctx.expression(0))
+                if tyype == Type.VOID:
+                    print("ERROR: unary operator '" + text + "' used on type void in line " + str(token.line) + " and column " + str(token.column))
+>>>>>>> a2872b510c9ef64da7aa032029a5abc9c405ae62
 
             return type_0, val_ret 
         
