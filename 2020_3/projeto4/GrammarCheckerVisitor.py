@@ -286,7 +286,10 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     if val is None:
                         line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
                     else:
-                        val_str = str(val)
+                        if type_exp == 'float':
+                            val_str = str(float_to_hex(val))
+                        else:
+                            val_str = str(val)
                         line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, val_str, tyype_ll, name)
                     self.file_ll.write(line_param)
                     
