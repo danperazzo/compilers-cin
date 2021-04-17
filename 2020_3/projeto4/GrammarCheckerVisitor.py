@@ -99,10 +99,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         params_def_ll = [""]
         for idx, item in enumerate(params.items()):
             param_name = item[0]
-            param_type = item[1][0]
+            param_type = type2lltype(item[1][0])
 
-            if param_type == 'int':
-                param_type = 'i32'
             line_param = '	%%%s = alloca %s, align 4\n'  % (param_name,param_type)
             line_param = line_param + ('	store %s %%%d, %s* %%%s, align 4\n'%(param_type,idx,param_type,param_name ) )
             self.file_ll.write(line_param)
@@ -243,12 +241,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             line = token.line
             row = token.column
             print("ERROR: na linha %d e coluna %d" %(line,row))
-
         else:
             for i in range(len(ctx.identifier())): # para cada identifier/expression que este nó possui...
                 name = ctx.identifier(i).getText()
                 exp = ctx.expression(i)
-                
+                tyype_ll = type2lltype(tyype)
+
+                line = '	%%%s = alloca %s, align 4\n'  % (name, tyype_ll)
+                self.file_ll.write(line)
+
                 is_global = False
                 if self.inside_what_function == "":
                     is_global = True
@@ -256,8 +257,11 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 self.ids_defined[name] = tyype, None, is_global
 
                 if exp is not None:
-                    type_exp, val, _ = self.visit(exp)
-
+                    type_exp, val, reg_exp = self.visit(exp)
+                    tyype_exp_ll = type2lltype(type_exp)
+                    line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
+                    self.file_ll.write(line_param)
+                    
                     if self.inside_bifurcation != 0:
                         val = None
 
