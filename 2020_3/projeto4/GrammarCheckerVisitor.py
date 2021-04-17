@@ -619,9 +619,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         
                         print("ERROR como aqui de tipo de argumento: na linha %d e coluna %d e tipo %s e %s" %(line,row,params_types[idx],type_exp))
 
-                line = "	call %s @%s(%s)\n" % (tyype_ll, name, ", ".join(type_exp_reg_ll_all))
+                line = "call %s @%s(%s)\n" % (tyype_ll, name, ", ".join(type_exp_reg_ll_all))
+                reg_return = None
+                if tyype != 'void':
+                    reg_return = "%%%d" % self.count_regs
+                    self.count_regs = self.count_regs + 1
+                    line = '	' + reg_return + ' = '+line
+                else:
+                    line = '	' + line
+
                 self.file_ll.write(line)
-            return tyype, None
+            return tyype, None, reg_return
         else:
             token = identifier.IDENTIFIER().getPayload()
             line = token.line
