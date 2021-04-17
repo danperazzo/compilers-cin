@@ -107,7 +107,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             line_param = line_param + ('	store %s %%%d, %s* %%%s, align 4\n'%(param_type,idx,param_type,param_name ) )
             self.file_ll.write(line_param)
         self.count_regs = len(params) + 1 
-        
+
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
@@ -135,8 +135,12 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print( "ERROR: trying to return a non void expression from void function '%s' in line %d and column %d" %(name,line,row))
                 self.file_ll.write("	ret %s\n" % tyype_ll)
             else:
-                type_exp, _ = self.visit(ctx.expression())
+                type_exp, _, reg_ret = self.visit(ctx.expression())
 
+                tyype_ll = type2lltype(type_exp)
+                line_exp_ret = '	ret %s %s\n' % (tyype_ll,reg_ret)
+                self.file_ll.write(line_exp_ret)
+                
                 if type_exp == Type.VOID:
                     token = ctx.RETURN().getPayload()
                     line = token.line
@@ -252,7 +256,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 self.ids_defined[name] = tyype, None, is_global
 
                 if exp is not None:
-                    type_exp, val = self.visit(exp)
+                    type_exp, val, _ = self.visit(exp)
 
                     if self.inside_bifurcation != 0:
                         val = None
@@ -406,41 +410,66 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             if id_name not in self.ids_regs.keys():
                 self.ids_regs[id_name] = "%%%d" % self.count_regs
                 function = self.inside_what_function
-                tyype = self.ids_defined[function][1][id_name][0]
+                if id_name in self.ids_defined[function][1]:
+                    tyype = self.ids_defined[function][1][id_name][0]
+                else:
+                    tyype = self.ids_defined[id_name][0]
                 tyype_ll = type2lltype(tyype)
 
                 line_id_expr = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name)
                 self.file_ll.write(line_id_expr)
                 self.count_regs += 1
+            tyype, val = self.visitIdentifier(ctx.identifier())
+            return tyype, val, self.ids_regs[id_name]
+
 
         if len(list_exp) > 1:
-            type_0, val_0 = self.visit(list_exp[0])
-            type_1, val_1 = self.visit(list_exp[1])
-
-
+            type_0, val_0, reg_0 = self.visit(list_exp[0])
+            type_1, val_1, reg_1 = self.visit(list_exp[1])
+            
             operation = ctx.OP.text
             token = ctx.OP
             line = token.line
+
+            if operation =='+':
+                op_ll = "add"
+            elif operation == '*':
+                op_ll = "mul"
+            elif operation == '-':
+                op_ll = "sub"
+            else:
+                op_ll = "div"
+            
+
+            reg_ret = "%%%d" % self.count_regs  
 
             if type_0 == Type.VOID or type_1 == Type.VOID:
                 row = token.column
 
                 print("ERROR: binary operator '%s' used on type void in line %d and column %d" %(operation,line,row))
-                return None, None
+                type_ret = None
+                val_ret = None
 
             elif type_0 == None or type_1 == None:
-                return None, None
-
+                type_ret = None
+                val_ret = None
+                
             val_ret = resolve_expr(val_0,val_1,operation, line)
-            
+            type_ret = type_0
             if type_0 == Type.FLOAT or type_1 == Type.FLOAT:
-                return Type.FLOAT, val_ret
+                type_ret = Type.FLOAT
+                op_ll = "f" + op_ll
+            
+            tyype_ll = type2lltype(type_ret)
 
-            return type_0, val_ret 
+            line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
+            self.file_ll.write(line_exp)
+            self.count_regs += 1
+            return type_ret, val_ret, reg_ret
         
         elif len(list_exp) == 1:
 
-            tyype, val = self.visit(list_exp[0])
+            tyype, val, reg = self.visit(list_exp[0])
 
             if ctx.OP is not None:
                 operation = ctx.OP.text
@@ -457,9 +486,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             print("line %d Expression %s simplified to: %d" %(line, expression, val))
 
             if tyype == Type.VOID:
-                return None, None
+                return None, None, None
             
-            return tyype, val
+            return tyype, val, reg
 
         elif ctx.array() is not None:
             val = None
