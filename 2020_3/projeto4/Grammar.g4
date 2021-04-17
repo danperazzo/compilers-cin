@@ -19,7 +19,7 @@ statement
 	| variable_assignment ';'
 	| expression ';'
 	| RETURN expression ';'
-	| RETURN ';'
+	| RETURN  ';'
 	| for_loop
 	| if_statement
 	| body
