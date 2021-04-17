@@ -64,6 +64,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
     inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
     inside_bifurcation = 0
+    file_ll = open('outputs/out.ll', 'w')
 
     # Visit a parse tree produced by GrammarParser#fiile.
     def visitFiile(self, ctx:GrammarParser.FiileContext):
@@ -75,6 +76,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         tyype = ctx.tyype().getText()
         name = ctx.identifier().getText()
         params = self.visit(ctx.arguments())
+
+        if tyype == 'int':
+            tyype_ll = 'i32'
+        else:
+            tyype_ll = tyype
+
+        # Get the types and order of all params
+        param_ll = [type_param[0] +  " %" + str(idx) if type_param[0] != 'int' else 'i32 %' + str(idx) for idx,type_param in enumerate(params.values())]
+        
+        # print("tyype =", tyype, "\nname", name, "\nparams =", params, "\n")
+        line = "define " + tyype_ll + " @" + name + "(" + ", ".join(param_ll) + ") { \n"
+        self.file_ll.write(line)
+
 
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
