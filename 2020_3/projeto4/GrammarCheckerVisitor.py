@@ -399,7 +399,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             if exp is not None:
                 error = False
-                type_exp,val = self.visit(exp)
+                type_exp,val, reg = self.visit(exp)
                 
                 if self.inside_bifurcation:
                     val = None
@@ -409,6 +409,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     token = identifier.IDENTIFIER().getPayload()
                     line = token.line
                     row = token.column
+                    type_exp = Type.FLOAT
 
                     print("WARNING: possible loss of information assigning float expression to int variable '%s' in line %d and column %d" %(name,line,row))
                 elif (tyype == Type.INT or tyype == Type.FLOAT) and type_exp == Type.STRING:
@@ -432,6 +433,38 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         self.ids_defined[name] = tyype, val, is_global
                     else:
                         self.ids_defined[name] = change_array_val(self.ids_defined[name], array_idx, val)
+
+                    op_atr = ctx.OP.text
+                    if op_atr == '=':
+                        print("a")
+                    elif op_atr == '+=':
+                        print("a")
+                    elif op_atr == '-=':
+                        print("a")
+                    elif op_atr == '/=':
+                        tyype_ll = type2lltype(tyype)
+                        line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
+                        self.count_regs = self.count_regs + 1
+                        self.file_ll.write(line_load_id)
+                        
+                        if val is not None:
+                            
+                            if type_exp == Type.FLOAT:
+                                val_str = str(float_to_hex(val))
+                            else:
+                                val_str = str(val)
+
+                            line_div = "	%%%d = sdiv %s %%%d, %s\n" % (self.count_regs, tyype_ll,self.count_regs-1, val_str)
+                            self.count_regs = self.count_regs + 1
+                            self.file_ll.write(line_div)
+
+                        line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs-1, tyype_ll, name)
+                            
+                        self.file_ll.write(line_store)
+
+
+                    elif op_atr == '*=':
+                        print("a")
         return
 
         
