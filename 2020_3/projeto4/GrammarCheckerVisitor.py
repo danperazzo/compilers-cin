@@ -494,9 +494,11 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             tyype_ll = type2lltype(type_ret)
 
-            line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
-            self.file_ll.write(line_exp)
-            self.count_regs += 1
+            if val_ret is None:
+                line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
+                self.file_ll.write(line_exp)
+                self.count_regs += 1
+            
             return type_ret, val_ret, reg_ret
         
         elif len(list_exp) == 1:
