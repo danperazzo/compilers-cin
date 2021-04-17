@@ -5,7 +5,12 @@ if __name__ is not None and "." in __name__:
 else:
     from GrammarParser import GrammarParser
 
-
+def type2lltype(tyype):
+    if tyype == 'int':
+        tyype_ll = 'i32'
+    else:
+        tyype_ll = tyype
+    return tyype_ll
 def resolve_expr(val_0,val_1,operation, line):
 
         if val_0 is None or val_1 is None:
@@ -85,14 +90,24 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         # Get the types and order of all params
         param_ll = [type_param[0] +  " %" + str(idx) if type_param[0] != 'int' else 'i32 %' + str(idx) for idx,type_param in enumerate(params.values())]
         
-        # print("tyype =", tyype, "\nname", name, "\nparams =", params, "\n")
-        line = "define " + tyype_ll + " @" + name + "(" + ", ".join(param_ll) + ") { \n"
+        line = "define %s @%s(%s) {\n" % (tyype_ll, name, ", ".join(param_ll))
         self.file_ll.write(line)
 
+        params_def_ll = [""]
+        for idx, item in enumerate(params.items()):
+            param_name = item[0]
+            param_type = item[1][0]
+
+            if param_type == 'int':
+                param_type = 'i32'
+            line_param = '	%%%s = alloca %s, align 4\n'  % (param_name,param_type)
+            line_param = line_param + ('	store %s %%%d, %s* %%%s, align 4\n'%(param_type,idx,param_type,param_name ) )
+            self.file_ll.write(line_param)
 
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
+        self.file_ll.write("}\n")
         return
 
 
@@ -106,13 +121,15 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         if ctx.RETURN() is not None:
             name = self.inside_what_function
             tyype = self.ids_defined[name][0]
+            tyype_ll = type2lltype(tyype)
+
 
             if tyype == Type.VOID:
                 token = ctx.RETURN().getPayload()
                 line = token.line
                 row = token.column
                 print( "ERROR: trying to return a non void expression from void function '%s' in line %d and column %d" %(name,line,row))
-                
+                self.file_ll.write("	ret %s\n" % tyype_ll)
             else:
                 type_exp, _ = self.visit(ctx.expression())
 
