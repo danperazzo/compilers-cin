@@ -5,12 +5,34 @@ if __name__ is not None and "." in __name__:
 else:
     from GrammarParser import GrammarParser
 
+import struct
+import math
+# Função utilizada para transformar um valor float para um valor hexadecimal 
+# (o equivalente em hexadecimal dos valores dos bits de um float)
+def float_to_hex(f):
+    float_hex = hex(struct.unpack('<Q', struct.pack('<d', f))[0])
+    if (int(float_hex[10],16) % 2 != 0):
+        if (float_hex[10] == 'f'):
+            float_hex = float(math.ceil(f))
+        else:
+            float_hex = float_hex[:10] + hex(int(float_hex[10],16) + 1)[2] + "0000000"
+
+    else: 
+        float_hex = float_hex[:11] + "0000000"
+    return float_hex
+
+
+
 def type2lltype(tyype):
     if tyype == 'int':
         tyype_ll = 'i32'
     else:
         tyype_ll = tyype
     return tyype_ll
+
+
+
+
 def resolve_expr(val_0,val_1,operation, line):
 
         if val_0 is None or val_1 is None:
@@ -259,7 +281,12 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if exp is not None:
                     type_exp, val, reg_exp = self.visit(exp)
                     tyype_exp_ll = type2lltype(type_exp)
-                    line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
+                    
+                    if val is None:
+                        line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
+                    else:
+                        val_str = str(val)
+                        line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, val_str, tyype_ll, name)
                     self.file_ll.write(line_param)
                     
                     if self.inside_bifurcation != 0:
@@ -517,7 +544,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print("ERROR: undefined array '%s' in line %d and column %d" %(name,line,row))
             
             self.visit(ctx.array())
-            return tyype, val
+            return tyype, val, None
 
         return self.visitChildren(ctx)
 
@@ -609,12 +636,12 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GrammarParser#integer.
     def visitInteger(self, ctx:GrammarParser.IntegerContext):
-        return Type.INT,int(ctx.INTEGER().getText())
+        return Type.INT,int(ctx.INTEGER().getText()), None
 
 
     # Visit a parse tree produced by GrammarParser#floating.
     def visitFloating(self, ctx:GrammarParser.FloatingContext): 
-        return Type.FLOAT, float(ctx.FLOATING().getText())
+        return Type.FLOAT, float(ctx.FLOATING().getText()), None
 
 
     # Visit a parse tree produced by GrammarParser#string.
