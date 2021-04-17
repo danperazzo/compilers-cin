@@ -277,7 +277,6 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     is_global = True
                 
                 self.ids_defined[name] = tyype, None, is_global
-                self.ids_regs[name] = "%" + name
 
                 if exp is not None:
                     type_exp, val, reg_exp = self.visit(exp)
@@ -478,19 +477,18 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         if ctx.identifier() is not None:
             id_name = ctx.identifier().getText()
 
+            tyype, val = self.visitIdentifier(ctx.identifier())
+            
+            if val is not None:
+                return tyype, val, None
+            
             if id_name not in self.ids_regs.keys():
                 self.ids_regs[id_name] = "%%%d" % self.count_regs
-                function = self.inside_what_function
-                if id_name in self.ids_defined[function][1]:
-                    tyype = self.ids_defined[function][1][id_name][0]
-                else:
-                    tyype = self.ids_defined[id_name][0]
                 tyype_ll = type2lltype(tyype)
 
                 line_id_expr = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name)
                 self.file_ll.write(line_id_expr)
                 self.count_regs += 1
-            tyype, val = self.visitIdentifier(ctx.identifier())
             return tyype, val, self.ids_regs[id_name]
 
 
