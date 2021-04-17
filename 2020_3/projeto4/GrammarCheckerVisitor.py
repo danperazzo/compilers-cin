@@ -277,6 +277,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     is_global = True
                 
                 self.ids_defined[name] = tyype, None, is_global
+                self.ids_regs[name] = "%" + name
 
                 if exp is not None:
                     type_exp, val, reg_exp = self.visit(exp)
@@ -573,6 +574,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitFunction_call(self, ctx:GrammarParser.Function_callContext):
         identifier = ctx.identifier()
         name = identifier.getText()
+                        # call void @splash(i32 8)
+
         
         if name in self.ids_defined.keys():
             tyype = self.ids_defined[name][0]
@@ -586,8 +589,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                 print("ERROR: incorrect number of parameters for function '%s' in line %d and column %d. Expecting %d, but %d were given" %(name,line,row,len(params_types),len(exprs)))
             else:
+                tyype_ll = type2lltype(tyype)
+                type_exp_reg_ll_all = []
                 for idx,exp in enumerate(exprs):
-                    type_exp, _ = self.visit(exp)
+                    type_exp, val_exp, reg_exp = self.visit(exp)
+                    if val_exp is None:
+                        type_exp_reg_ll_all.append(type2lltype(type_exp) + " " + reg_exp)
+                    else:
+                        if type_exp == 'float':
+                            val_exp = float_to_hex(val_exp)
+                        type_exp_reg_ll_all.append(type2lltype(type_exp)+ " " + str(val_exp))
 
                     if  (params_types[idx] == Type.INT and type_exp == Type.FLOAT):
                         token = identifier.IDENTIFIER().getPayload()
@@ -603,7 +614,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         
                         print("ERROR como aqui de tipo de argumento: na linha %d e coluna %d e tipo %s e %s" %(line,row,params_types[idx],type_exp))
 
-           
+                line = "	call %s @%s(%s)\n" % (tyype_ll, name, ", ".join(type_exp_reg_ll_all))
+                self.file_ll.write(line)
             return tyype, None
         else:
             token = identifier.IDENTIFIER().getPayload()
