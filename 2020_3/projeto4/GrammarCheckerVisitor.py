@@ -69,6 +69,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     ids_defined = {} # Dicionário para armazenar as informações necessárias para cada identifier definido
     inside_what_function = "" # String que guarda a função atual que o visitor está visitando. Útil para acessar dados da função durante a visitação da árvore sintática da função.
     inside_bifurcation = 0
+    ids_regs = {} # Dicionário para mapear ids em registradores
+    count_regs = 0 # Contador para o nome do registrador
     file_ll = open('outputs/out.ll', 'w')
 
     # Visit a parse tree produced by GrammarParser#fiile.
@@ -81,6 +83,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         tyype = ctx.tyype().getText()
         name = ctx.identifier().getText()
         params = self.visit(ctx.arguments())
+
 
         if tyype == 'int':
             tyype_ll = 'i32'
@@ -103,7 +106,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             line_param = '	%%%s = alloca %s, align 4\n'  % (param_name,param_type)
             line_param = line_param + ('	store %s %%%d, %s* %%%s, align 4\n'%(param_type,idx,param_type,param_name ) )
             self.file_ll.write(line_param)
-
+        self.count_regs = len(params) + 1 
+        
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
@@ -396,9 +400,23 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     def visitExpression(self, ctx:GrammarParser.ExpressionContext):
         list_exp = ctx.expression()
 
+        if ctx.identifier() is not None:
+            id_name = ctx.identifier().getText()
+
+            if id_name not in self.ids_regs.keys():
+                self.ids_regs[id_name] = "%%%d" % self.count_regs
+                function = self.inside_what_function
+                tyype = self.ids_defined[function][1][id_name][0]
+                tyype_ll = type2lltype(tyype)
+
+                line_id_expr = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name)
+                self.file_ll.write(line_id_expr)
+                self.count_regs += 1
+
         if len(list_exp) > 1:
             type_0, val_0 = self.visit(list_exp[0])
             type_1, val_1 = self.visit(list_exp[1])
+
 
             operation = ctx.OP.text
             token = ctx.OP
@@ -410,7 +428,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print("ERROR: binary operator '%s' used on type void in line %d and column %d" %(operation,line,row))
                 return None, None
 
-            elif type_0 == None  or type_1 == None:
+            elif type_0 == None or type_1 == None:
                 return None, None
 
             val_ret = resolve_expr(val_0,val_1,operation, line)
@@ -584,7 +602,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if name in self.ids_defined.keys():
                     tyype = self.ids_defined[name][0]
                     if not self.ids_defined[name][2]:
-                        val = self.ids_defined[name][1] 
-    
+                        val = self.ids_defined[name][1]
+                
         return tyype, val
 
