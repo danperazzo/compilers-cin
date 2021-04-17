@@ -429,11 +429,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     print("ERROR: na linha %d e coluna %d" %(line,row))
 
                 if not error:
-                    if array_idx is None:
-                        self.ids_defined[name] = tyype, val, is_global
-                    else:
-                        self.ids_defined[name] = change_array_val(self.ids_defined[name], array_idx, val)
-
+                    
                     op_atr = ctx.OP.text
                     if op_atr == '=':
                         print("a")
@@ -452,7 +448,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             if type_exp == Type.FLOAT:
                                 val_str = str(float_to_hex(val))
                             else:
-                                val_str = str(val)
+                                val_str = str(int(val))
 
                             line_div = "	%%%d = sdiv %s %%%d, %s\n" % (self.count_regs, tyype_ll,self.count_regs-1, val_str)
                             self.count_regs = self.count_regs + 1
@@ -462,9 +458,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             
                         self.file_ll.write(line_store)
 
+                        _, val_old, _ = self.ids_defined[name]
+                        val = val_old/val
 
                     elif op_atr == '*=':
                         print("a")
+                    if array_idx is None:
+                        self.ids_defined[name] = tyype, val, is_global
+                    else:
+                        self.ids_defined[name] = change_array_val(self.ids_defined[name], array_idx, val)
+
         return
 
         
@@ -636,6 +639,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     else:
                         if type_exp == 'float':
                             val_exp = float_to_hex(val_exp)
+                        else:
+                            val_exp = str(int(val_exp))
                         type_exp_reg_ll_all.append(type2lltype(type_exp)+ " " + str(val_exp))
 
                     if  (params_types[idx] == Type.INT and type_exp == Type.FLOAT):
