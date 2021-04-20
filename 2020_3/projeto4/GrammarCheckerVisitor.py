@@ -291,12 +291,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if exp is not None:
                     type_exp, val, reg_exp = self.visit(exp)
                     tyype_exp_ll = type2lltype(type_exp)
+
+                    if tyype_ll == 'float' and tyype_exp_ll != 'float':
+                        tyype_exp_ll = 'float'
+                    
                     
                     if val is None:
 
                         line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
                     else:
-                        if type_exp == 'float':
+                        if tyype_exp_ll == 'float':
                             val_str = str(float_to_hex(val))
                         else:
                             val_str = str(val)

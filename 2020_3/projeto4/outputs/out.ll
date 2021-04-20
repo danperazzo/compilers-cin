@@ -28,16 +28,21 @@ define float @operate(i32 %0, i32 %1) {
 define i32 @main() {
 	%a = alloca i32, align 4
 	store i32 14, i32* %a, align 4
+
 	%b = alloca i32, align 4
 	store i32 46, i32* %b, align 4
+
 	%c = alloca i32, align 4
 	store i32 -644, i32* %c, align 4
+
 	%d = alloca i32, align 4
 	store i32 -38654, i32* %d, align 4
+
 	%e = alloca float, align 4
-	store i32 -24893208, float* %e, align 4
+	store float 0xc177bd7180000000, float* %e, align 4
+	
 	%f = alloca float, align 4
-	store i32 644, float* %f, align 4
+	store float 0x4084200000000000, float* %f, align 4
 	%g = alloca float, align 4
 	store float 0x4084900000000000, float* %g, align 4
 	%h = alloca float, align 4
