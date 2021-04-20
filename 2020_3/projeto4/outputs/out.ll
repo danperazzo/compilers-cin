@@ -1,7 +1,7 @@
 @glob1 = global float 0x40139999a0000000
 @glob2 = global i32 49
 define float @return3() {
-	ret float None
+	ret float 0x4008000000000000
 }
 
 define float @operate(i32 %0, i32 %1) {

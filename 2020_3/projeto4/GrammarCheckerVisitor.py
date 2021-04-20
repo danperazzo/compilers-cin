@@ -155,10 +155,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 print( "ERROR: trying to return a non void expression from void function '%s' in line %d and column %d" %(name,line,row))
                 self.file_ll.write("	ret %s\n" % tyype_ll)
             else:
-                type_exp, _, reg_ret = self.visit(ctx.expression())
+                type_exp, val, reg_ret = self.visit(ctx.expression())
 
                 tyype_ll = type2lltype(type_exp)
-                line_exp_ret = '	ret %s %s\n' % (tyype_ll,reg_ret)
+                if val is not None:
+                    if type_exp == Type.FLOAT:
+                        val_ll = float_to_hex(val)
+                    else:
+                        val_ll = str(int(val))
+                    line_exp_ret = '	ret %s %s\n' % (tyype_ll,val_ll)
+                else:    
+                    line_exp_ret = '	ret %s %s\n' % (tyype_ll,reg_ret)
                 self.file_ll.write(line_exp_ret)
                 
                 if type_exp == Type.VOID:
