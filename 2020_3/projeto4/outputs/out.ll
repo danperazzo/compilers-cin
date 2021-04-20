@@ -12,15 +12,17 @@ define float @operate(i32 %0, i32 %1) {
 	store i32 %1, i32* %k2, align 4
 	%valor = alloca float, align 4
 	%3 = load i32, i32* %k1, align 4
-	%4 = fmul float %3, 0x4008000000000000
-	%5 = load i32, i32* %k2, align 4
-	%6 = fmul float %5, 0x401c000000000000
-	%7 = fadd float %4, %6
-	%8 = fdiv float %7, 10
-	store float %8, float* %valor, align 4
-	%9 = load float, float* %valor, align 4
-	%10 = fadd float %9, 5
-	ret float %10
+	%4 = sitofp i32 %3 to float
+	%5 = fmul float %4, 0x4008000000000000
+	%6 = load i32, i32* %k2, align 4
+	%7 = sitofp i32 %6 to float
+	%8 = fmul float %7, 0x401c000000000000
+	%9 = fadd float %4, %7
+	%10 = fdiv float %9, 10
+	store float %10, float* %valor, align 4
+	%11 = load float, float* %valor, align 4
+	%12 = fadd float %11, 5
+	ret float %12
 }
 
 define i32 @main() {
