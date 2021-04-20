@@ -131,7 +131,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
-        self.file_ll.write("}\n")
+        self.file_ll.write("}\n\n")
         return
 
 
@@ -268,13 +268,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 name = ctx.identifier(i).getText()
                 exp = ctx.expression(i)
                 tyype_ll = type2lltype(tyype)
-
-                line = '	%%%s = alloca %s, align 4\n'  % (name, tyype_ll)
-                self.file_ll.write(line)
+                
 
                 is_global = False
                 if self.inside_what_function == "":
                     is_global = True
+                    
+
+                if not is_global:
+                    line = '	%%%s = alloca %s, align 4\n'  % (name, tyype_ll)
+                    self.file_ll.write(line)
                 
                 self.ids_defined[name] = tyype, None, is_global
 
@@ -283,13 +286,17 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     tyype_exp_ll = type2lltype(type_exp)
                     
                     if val is None:
+
                         line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, reg_exp, tyype_ll, name)
                     else:
                         if type_exp == 'float':
                             val_str = str(float_to_hex(val))
                         else:
                             val_str = str(val)
-                        line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, val_str, tyype_ll, name)
+                        if is_global:
+                            line_param = "@%s = global %s %s\n"%(name,tyype_ll,val_str)  
+                        else:
+                            line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, val_str, tyype_ll, name)
                     self.file_ll.write(line_param)
                     
                     if self.inside_bifurcation != 0:
