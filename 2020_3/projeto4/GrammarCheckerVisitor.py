@@ -546,9 +546,42 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             tyype_ll = type2lltype(type_ret)
 
             if val_ret is None:
-                line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
+
+                if val_0 is not None:
+
+                    if type_0 == 'float':
+                        val_str = str(float_to_hex(val_0))
+                    else:
+                        val_str = str(val_0)
+                    
+                    atr_0 = val_str
+                else:
+                    atr_0 = reg_0
+                
+                if val_1 is not None:
+
+                    if type_1 == 'float':
+                        val_str = str(float_to_hex(val_1))
+                    else:
+                        val_str = str(val_1)
+                    
+                    atr_1 = val_str
+                else:
+                    atr_1 = reg_1
+
+
+                line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, atr_0, atr_1)
                 self.file_ll.write(line_exp)
                 self.count_regs += 1
+            #else:
+            #    if val_0 is None:
+#
+            #     if type_exp == 'float':
+            #            val_str = str(float_to_hex(val_ret))
+            #        else:
+            #            val_str = str(val_ret)
+            #    line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
+            #    self.file_ll.write(line_exp)
             
             return type_ret, val_ret, reg_ret
         
