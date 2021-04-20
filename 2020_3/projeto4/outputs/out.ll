@@ -1,5 +1,6 @@
 @glob1 = global float 0x40139999a0000000
 @glob2 = global i32 49
+
 define float @return3() {
 	ret float 0x4008000000000000
 }
@@ -51,4 +52,3 @@ define i32 @main() {
 	%8 = add i32 %7, %7
 	ret i32 %8
 }
-

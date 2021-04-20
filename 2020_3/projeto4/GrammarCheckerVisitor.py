@@ -115,7 +115,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         # Get the types and order of all params
         param_ll = [type_param[0] +  " %" + str(idx) if type_param[0] != 'int' else 'i32 %' + str(idx) for idx,type_param in enumerate(params.values())]
         
-        line = "define %s @%s(%s) {\n" % (tyype_ll, name, ", ".join(param_ll))
+        line = "\ndefine %s @%s(%s) {\n" % (tyype_ll, name, ", ".join(param_ll))
         self.file_ll.write(line)
 
         params_def_ll = [""]
@@ -131,7 +131,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
         self.ids_defined[name] = tyype, params, None
         self.inside_what_function = name
         self.visit(ctx.body())
-        self.file_ll.write("}\n\n")
+        self.file_ll.write("}\n")
         return
 
 
