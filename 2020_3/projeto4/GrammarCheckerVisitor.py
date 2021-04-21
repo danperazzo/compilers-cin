@@ -504,7 +504,33 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         val = val_old/val
 
                     elif op_atr == '*=':
-                        print("a")
+                        tyype_ll = type2lltype(tyype)
+                        line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
+                        self.count_regs = self.count_regs + 1
+                        self.file_ll.write(line_load_id)
+                        mul_op = "mul"
+                        
+                        if val is not None:
+                            
+                            if type_exp == Type.FLOAT:
+                                mul_op = "f"+mul_op
+                                val_str = str(float_to_hex(val))
+                            else:
+                                val_str = str(int(val))
+
+                            line_div = "	%%%d = %s %s %%%d, %s\n" % (self.count_regs, mul_op,tyype_ll,self.count_regs-1, val_str)
+                            self.count_regs = self.count_regs + 1
+                            self.file_ll.write(line_div)
+
+                        line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs-1, tyype_ll, name)
+                            
+                        self.file_ll.write(line_store)
+
+                        if name in self.ids_defined.keys():
+                            
+                            _, val_old, _ = self.ids_defined[name]
+                            val = val_old*val
+                            
                     if array_idx is None:
                         self.ids_defined[name] = tyype, val, is_global
                     else:
@@ -598,6 +624,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         reg_0 = "%"+str(self.count_regs)
                         self.file_ll.write(line_conv_float)
                         self.count_regs += 1
+
+            elif op_ll=="div":
+                op_ll = "sdiv"
             
             tyype_ll = type2lltype(type_ret)
             reg_ret = "%%%d" % self.count_regs  
