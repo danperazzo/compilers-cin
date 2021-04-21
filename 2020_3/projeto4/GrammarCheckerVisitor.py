@@ -418,18 +418,31 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 
             exp = ctx.expression()
 
+            id_name = identifier.getText()
+
+            if is_global:
+                id_name_prefix = "@"+id_name
+            else:
+                id_name_prefix = "%"+id_name
+          
+            self.ids_regs[id_name] = "%%%d" % self.count_regs
+            tyype_ll = type2lltype(tyype)
+    
+            line_id_expr = "	%%%d = load %s, %s* %s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name_prefix)
+            self.file_ll.write(line_id_expr)
+            self.count_regs += 1
 
             if ctx.OP.text == "++":
 
                 if val_old is not None:
                     val_old = val_old + 1
                 tyype_ll = type2lltype(tyype)
-                line_load_op_inc = "	%%%d = load %s, %s* %%%s, align 4\n"%(self.count_regs,tyype_ll,tyype_ll,name)
-                self.count_regs = self.count_regs + 1
+                # line_load_op_inc = "	%%%d = load %s, %s* %%%s, align 4\n"%(self.count_regs,tyype_ll,tyype_ll,name)
+                # self.count_regs = self.count_regs + 1
                 line_add_op_inc = "	%%%d = add %%%d, 1\n" % (self.count_regs,self.count_regs - 1)
                 self.count_regs = self.count_regs + 1
                 line_store_op_inc = "	store %s %%%d, %s* %%%s, align 4\n" % (tyype_ll,self.count_regs - 1,tyype_ll,name)
-                self.file_ll.write(line_load_op_inc+line_add_op_inc+line_store_op_inc)
+                self.file_ll.write(line_add_op_inc+line_store_op_inc)
 
 
                 if name in self.ids_defined.keys():
@@ -505,9 +518,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
                     elif op_atr == '*=':
                         tyype_ll = type2lltype(tyype)
-                        line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
-                        self.count_regs = self.count_regs + 1
-                        self.file_ll.write(line_load_id)
+                        # line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
+                        # self.count_regs = self.count_regs + 1
+                        # self.file_ll.write(line_load_id)
                         mul_op = "mul"
                         
                         if val is not None:
@@ -559,8 +572,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             if val is not None:
                 return tyype, val, None
-            print("chaves e id_name:" + id_name)
-            print(self.ids_regs.keys())
+
             if id_name not in self.ids_regs.keys():
 
                 if id_name in self.ids_defined.keys():
@@ -577,6 +589,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 line_id_expr = "	%%%d = load %s, %s* %s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name_prefix)
                 self.file_ll.write(line_id_expr)
                 self.count_regs += 1
+            
             return tyype, val, self.ids_regs[id_name]
 
 
@@ -597,6 +610,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             else:
                 op_ll = "div"
             
+            print("op = ", op_ll)
 
 
             if type_0 == Type.VOID or type_1 == Type.VOID:
