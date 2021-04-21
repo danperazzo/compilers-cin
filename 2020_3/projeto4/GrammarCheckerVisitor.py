@@ -528,7 +528,6 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 op_ll = "div"
             
 
-            reg_ret = "%%%d" % self.count_regs  
 
             if type_0 == Type.VOID or type_1 == Type.VOID:
                 row = token.column
@@ -567,6 +566,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         self.count_regs += 1
             
             tyype_ll = type2lltype(type_ret)
+            reg_ret = "%%%d" % self.count_regs  
 
             if val_ret is None:
 

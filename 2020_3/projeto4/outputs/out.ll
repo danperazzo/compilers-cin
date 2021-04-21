@@ -10,6 +10,7 @@ define float @operate(i32 %0, i32 %1) {
 	store i32 %0, i32* %k1, align 4
 	%k2 = alloca i32, align 4
 	store i32 %1, i32* %k2, align 4
+
 	%valor = alloca float, align 4
 	%3 = load i32, i32* %k1, align 4
 	%4 = sitofp i32 %3 to float
@@ -17,9 +18,10 @@ define float @operate(i32 %0, i32 %1) {
 	%6 = load i32, i32* %k2, align 4
 	%7 = sitofp i32 %6 to float
 	%8 = fmul float %7, 0x401c000000000000
-	%9 = fadd float %4, %7
+	%9 = fadd float %5, %8
 	%10 = fdiv float %9, 0x4024000000000000
 	store float %10, float* %valor, align 4
+	
 	%11 = load float, float* %valor, align 4
 	%12 = fadd float %11, 0x4014000000000000
 	ret float %12
