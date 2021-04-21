@@ -672,14 +672,25 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 token = ctx.OP
                 line = token.line
 
-                if val is not None:
-                    if operation == "-":
+                if operation == "-":
+                    if val is not None:
                         expression = operation + " " + str(val) 
                         val = - val
                         if type(val) == float:
                             print("line %d Expression %s simplified to: %.1f" %(line, expression, val))
                         else:
                             print("line %d Expression %s simplified to: %d" %(line, expression, val))
+
+                    else:
+                        tyype_ll = type2lltype(tyype)
+                        line_sub = "	%%%d = sub %s 0, %s\n"%(self.count_regs,tyype_ll,reg)
+                        reg = "%"+str(self.count_regs)
+                        self.count_regs = self.count_regs +1
+                        self.file_ll.write(line_sub)
+
+
+                        
+                        
 
             if tyype == Type.VOID:
                 return None, None, None
