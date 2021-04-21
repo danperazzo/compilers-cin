@@ -126,6 +126,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             line_param = '	%%%s = alloca %s, align 4\n'  % (param_name,param_type)
             line_param = line_param + ('	store %s %%%d, %s* %%%s, align 4\n'%(param_type,idx,param_type,param_name ) )
             self.file_ll.write(line_param)
+            self.ids_regs.pop(param_name, None)
         self.count_regs = len(params) + 1 
 
         self.ids_defined[name] = tyype, params, None
@@ -309,6 +310,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                         else:
                             line_param = '	store %s %s, %s* %%%s, align 4\n' % (tyype_exp_ll, val_str, tyype_ll, name)
                     self.file_ll.write(line_param)
+                    self.ids_regs.pop(name, None)
                     
                     if self.inside_bifurcation != 0:
                         val = None
@@ -428,21 +430,22 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             self.ids_regs[id_name] = "%%%d" % self.count_regs
             tyype_ll = type2lltype(tyype)
     
-            line_id_expr = "	%%%d = load %s, %s* %s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name_prefix)
-            self.file_ll.write(line_id_expr)
-            self.count_regs += 1
+            if ctx.OP.text != '=':
+                line_id_expr = "	%%%d = load %s, %s* %s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name_prefix)
+                self.file_ll.write(line_id_expr)
+                self.count_regs += 1
 
             if ctx.OP.text == "++":
 
                 if val_old is not None:
                     val_old = val_old + 1
                 tyype_ll = type2lltype(tyype)
-                # line_load_op_inc = "	%%%d = load %s, %s* %%%s, align 4\n"%(self.count_regs,tyype_ll,tyype_ll,name)
-                # self.count_regs = self.count_regs + 1
+
                 line_add_op_inc = "	%%%d = add %%%d, 1\n" % (self.count_regs,self.count_regs - 1)
                 self.count_regs = self.count_regs + 1
                 line_store_op_inc = "	store %s %%%d, %s* %%%s, align 4\n" % (tyype_ll,self.count_regs - 1,tyype_ll,name)
                 self.file_ll.write(line_add_op_inc+line_store_op_inc)
+                self.ids_regs.pop(name, None)
 
 
                 if name in self.ids_defined.keys():
@@ -486,14 +489,16 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 if not error:
                     
                     op_atr = ctx.OP.text
+                    tyype_ll = type2lltype(tyype)
                     if op_atr == '=':
-                        print("igual")
+                        line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs, tyype_ll, name)
+                        self.file_ll.write(line_store)
+                        self.ids_regs.pop(name, None)
                     elif op_atr == '+=':
-                        print("+igual")
+                        pass
                     elif op_atr == '-=':
-                        print("-igual")
+                        pass
                     elif op_atr == '/=':
-                        tyype_ll = type2lltype(tyype)
                         line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
                         self.count_regs = self.count_regs + 1
                         self.file_ll.write(line_load_id)
@@ -510,17 +515,14 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             self.file_ll.write(line_div)
 
                         line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs-1, tyype_ll, name)
-                            
                         self.file_ll.write(line_store)
+                        self.ids_regs.pop(name, None)
 
                         _, val_old, _ = self.ids_defined[name]
                         val = val_old/val
 
                     elif op_atr == '*=':
                         tyype_ll = type2lltype(tyype)
-                        # line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
-                        # self.count_regs = self.count_regs + 1
-                        # self.file_ll.write(line_load_id)
                         mul_op = "mul"
                         
                         if val is not None:
@@ -545,8 +547,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             
 
                         line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs-1, tyype_ll, name)
-                            
                         self.file_ll.write(line_store)
+                        self.ids_regs.pop(name, None)
 
                         if name in self.ids_defined.keys():
                             
