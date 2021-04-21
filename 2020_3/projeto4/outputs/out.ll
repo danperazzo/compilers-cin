@@ -18,29 +18,24 @@ define float @operate(i32 %0, i32 %1) {
 	%7 = sitofp i32 %6 to float
 	%8 = fmul float %7, 0x401c000000000000
 	%9 = fadd float %4, %7
-	%10 = fdiv float %9, 10
+	%10 = fdiv float %9, 0x4024000000000000
 	store float %10, float* %valor, align 4
 	%11 = load float, float* %valor, align 4
-	%12 = fadd float %11, 5
+	%12 = fadd float %11, 0x4014000000000000
 	ret float %12
 }
 
 define i32 @main() {
 	%a = alloca i32, align 4
 	store i32 14, i32* %a, align 4
-
 	%b = alloca i32, align 4
 	store i32 46, i32* %b, align 4
-
 	%c = alloca i32, align 4
 	store i32 -644, i32* %c, align 4
-
 	%d = alloca i32, align 4
 	store i32 -38654, i32* %d, align 4
-
 	%e = alloca float, align 4
 	store float 0xc177bd7180000000, float* %e, align 4
-	
 	%f = alloca float, align 4
 	store float 0x4084200000000000, float* %f, align 4
 	%g = alloca float, align 4
@@ -51,7 +46,7 @@ define i32 @main() {
 	store float %2, float* %h, align 4
 	%i = alloca float, align 4
 	%3 = call float @return3()
-	%4 = fadd float %3, 5
+	%4 = fadd float %3, 0x4014000000000000
 	%5 = load float, float* %h, align 4
 	%6 = fmul float %4, %5
 	store float %6, float* %i, align 4

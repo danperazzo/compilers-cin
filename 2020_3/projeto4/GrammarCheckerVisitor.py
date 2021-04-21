@@ -547,19 +547,24 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 type_ret = Type.FLOAT
                 op_ll = "f" + op_ll
                 
-                if type_0 == Type.FLOAT and type_1 != Type.FLOAT and reg_1 is not None:
+                if type_0 == Type.FLOAT and type_1 != Type.FLOAT:
+
+                    type_1 = Type.FLOAT
+                    if reg_1 is not None:
                     
-                    line_conv_float = "	%%%d = sitofp i32 %s to float\n" %(self.count_regs,reg_1)
-                    reg_1 = "%"+str(self.count_regs)
-                    self.file_ll.write(line_conv_float)
-                    self.count_regs += 1
+                        line_conv_float = "	%%%d = sitofp i32 %s to float\n" %(self.count_regs,reg_1)
+                        reg_1 = "%"+str(self.count_regs)
+                        self.file_ll.write(line_conv_float)
+                        self.count_regs += 1
                 
-                if type_1 == Type.FLOAT and type_0 != Type.FLOAT and reg_0 is not None:
+                if type_1 == Type.FLOAT and type_0 != Type.FLOAT:
                     
-                    line_conv_float = "	%%%d = sitofp i32 %s to float\n" %(self.count_regs,reg_0)
-                    reg_0 = "%"+str(self.count_regs)
-                    self.file_ll.write(line_conv_float)
-                    self.count_regs += 1
+                    type_0 = Type.FLOAT
+                    if reg_0 is not None:
+                        line_conv_float = "	%%%d = sitofp i32 %s to float\n" %(self.count_regs,reg_0)
+                        reg_0 = "%"+str(self.count_regs)
+                        self.file_ll.write(line_conv_float)
+                        self.count_regs += 1
             
             tyype_ll = type2lltype(type_ret)
 
