@@ -474,11 +474,11 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     
                     op_atr = ctx.OP.text
                     if op_atr == '=':
-                        print("a")
+                        print("igual")
                     elif op_atr == '+=':
-                        print("a")
+                        print("+igual")
                     elif op_atr == '-=':
-                        print("a")
+                        print("-igual")
                     elif op_atr == '/=':
                         tyype_ll = type2lltype(tyype)
                         line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
@@ -518,9 +518,18 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             else:
                                 val_str = str(int(val))
 
-                            line_div = "	%%%d = %s %s %%%d, %s\n" % (self.count_regs, mul_op,tyype_ll,self.count_regs-1, val_str)
+                            line_mul = "	%%%d = %s %s %%%d, %s\n" % (self.count_regs, mul_op,tyype_ll,self.count_regs-1, val_str)
                             self.count_regs = self.count_regs + 1
-                            self.file_ll.write(line_div)
+                            self.file_ll.write(line_mul)
+                        else:
+                            if type_exp == Type.FLOAT:
+                                mul_op = "f"+mul_op
+                            
+                            line_mul = "	%%%d = %s %s %%%d, %s\n" % (self.count_regs, mul_op,tyype_ll,self.count_regs-1, reg)
+                            self.count_regs = self.count_regs + 1
+                            self.file_ll.write(line_mul)
+
+                            
 
                         line_store = '	store %s %%%d, %s* %%%s, align 4\n' % (tyype_ll, self.count_regs-1, tyype_ll, name)
                             
@@ -550,7 +559,8 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             
             if val is not None:
                 return tyype, val, None
-            
+            print("chaves e id_name:" + id_name)
+            print(self.ids_regs.keys())
             if id_name not in self.ids_regs.keys():
 
                 if id_name in self.ids_defined.keys():
