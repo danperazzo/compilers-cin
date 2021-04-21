@@ -1,4 +1,3 @@
-
 define i32 @half(i32 %0) {
 	%x = alloca i32, align 4
 	store i32 %0, i32* %x, align 4

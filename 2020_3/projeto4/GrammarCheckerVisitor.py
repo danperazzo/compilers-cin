@@ -499,9 +499,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     elif op_atr == '-=':
                         pass
                     elif op_atr == '/=':
-                        line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
-                        self.count_regs = self.count_regs + 1
-                        self.file_ll.write(line_load_id)
+                        # line_load_id = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, name)
+                        # self.count_regs = self.count_regs + 1
+                        # self.file_ll.write(line_load_id)
                         
                         if val is not None:
                             
