@@ -409,7 +409,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
             if name in self.ids_defined.keys():
                 tyype = self.ids_defined[name][0] 
                 is_global = self.ids_defined[name][2]
-                _,val_old, _ = self.ids_defined[name][1]
+                val_old = self.ids_defined[name][1]
 
 
             else:
