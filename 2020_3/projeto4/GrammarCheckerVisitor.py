@@ -405,14 +405,39 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
 
             print("ERROR: undefined variable '%s' in line %d and column %d" %(name,line,row))
         else:
+
             if name in self.ids_defined.keys():
                 tyype = self.ids_defined[name][0] 
                 is_global = self.ids_defined[name][2]
+                _,val_old, _ = self.ids_defined[name][1]
+
+
             else:
-                tyype = self.ids_defined[function][1][name]
+                tyype, val_old = self.ids_defined[function][1][name]
                 is_global = False
                 
             exp = ctx.expression()
+
+
+            if ctx.OP.text == "++":
+
+                if val_old is not None:
+                    val_old = val_old + 1
+                tyype_ll = type2lltype(tyype)
+                line_load_op_inc = "	%%%d = load %s, %s* %%%s, align 4\n"%(self.count_regs,tyype_ll,tyype_ll,name)
+                self.count_regs = self.count_regs + 1
+                line_add_op_inc = "	%%%d = add %%%d, 1\n" % (self.count_regs,self.count_regs - 1)
+                self.count_regs = self.count_regs + 1
+                line_store_op_inc = "	store %s %%%d, %s* %%%s, align 4\n" % (tyype_ll,self.count_regs - 1,tyype_ll,name)
+                self.file_ll.write(line_load_op_inc+line_add_op_inc+line_store_op_inc)
+
+
+                if name in self.ids_defined.keys():
+                    self.ids_defined[name][1] = tyype, val_old,is_global
+
+                else:
+                    self.ids_defined[function][1][name] = tyype, val_old
+                    
             
             if exp is not None:
                 error = False
@@ -501,10 +526,19 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 return tyype, val, None
             
             if id_name not in self.ids_regs.keys():
+
+                if id_name in self.ids_defined.keys():
+                    if self.ids_defined[id_name][2]:
+                        id_name_prefix = "@"+id_name
+                    else:
+                        id_name_prefix = "%"+id_name
+                else:
+                    id_name_prefix = "%"+id_name
+
                 self.ids_regs[id_name] = "%%%d" % self.count_regs
                 tyype_ll = type2lltype(tyype)
-
-                line_id_expr = "	%%%d = load %s, %s* %%%s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name)
+        
+                line_id_expr = "	%%%d = load %s, %s* %s, align 4\n" % (self.count_regs, tyype_ll, tyype_ll, id_name_prefix)
                 self.file_ll.write(line_id_expr)
                 self.count_regs += 1
             return tyype, val, self.ids_regs[id_name]
@@ -596,15 +630,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                 line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, atr_0, atr_1)
                 self.file_ll.write(line_exp)
                 self.count_regs += 1
-            #else:
-            #    if val_0 is None:
-#
-            #     if type_exp == 'float':
-            #            val_str = str(float_to_hex(val_ret))
-            #        else:
-            #            val_str = str(val_ret)
-            #    line_exp = "	%%%d = %s %s %s, %s\n" % (self.count_regs, op_ll, tyype_ll, reg_0, reg_1)
-            #    self.file_ll.write(line_exp)
+
             
             return type_ret, val_ret, reg_ret
         

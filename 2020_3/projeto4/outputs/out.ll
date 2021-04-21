@@ -10,7 +10,6 @@ define float @operate(i32 %0, i32 %1) {
 	store i32 %0, i32* %k1, align 4
 	%k2 = alloca i32, align 4
 	store i32 %1, i32* %k2, align 4
-
 	%valor = alloca float, align 4
 	%3 = load i32, i32* %k1, align 4
 	%4 = sitofp i32 %3 to float
@@ -21,10 +20,12 @@ define float @operate(i32 %0, i32 %1) {
 	%9 = fadd float %5, %8
 	%10 = fdiv float %9, 0x4024000000000000
 	store float %10, float* %valor, align 4
-	
-	%11 = load float, float* %valor, align 4
-	%12 = fadd float %11, 0x4014000000000000
-	ret float %12
+	%11 = load i32, i32* %k2, align 4
+	%12 = add %11, 1
+	store i32 %12, i32* %k2, align 4
+	%13 = load float, float* %valor, align 4
+	%14 = fadd float %13, 0x4014000000000000
+	ret float %14
 }
 
 define i32 @main() {
@@ -42,17 +43,20 @@ define i32 @main() {
 	store float 0x4084200000000000, float* %f, align 4
 	%g = alloca float, align 4
 	store float 0x4084900000000000, float* %g, align 4
+
 	%h = alloca float, align 4
-	%1 = load float, float* %glob1, align 4
+	%1 = load float, float* @glob1, align 4
 	%2 = fadd float %1, 0x4084900000000000
 	store float %2, float* %h, align 4
+	
 	%i = alloca float, align 4
 	%3 = call float @return3()
 	%4 = fadd float %3, 0x4014000000000000
 	%5 = load float, float* %h, align 4
 	%6 = fmul float %4, %5
+	
 	store float %6, float* %i, align 4
-	%7 = load i32, i32* %glob2, align 4
+	%7 = load i32, i32* @glob2, align 4
 	%8 = add i32 38070, %7
 	ret i32 %8
 }
