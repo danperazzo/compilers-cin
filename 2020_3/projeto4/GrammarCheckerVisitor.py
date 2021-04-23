@@ -95,6 +95,9 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
     count_regs = 0 # Contador para o nome do registrador
     file_ll = open('outputs/out.ll', 'w')
 
+    def __del__(self):
+        self.file_ll.close()
+
     # Visit a parse tree produced by GrammarParser#fiile.
     def visitFiile(self, ctx:GrammarParser.FiileContext):
         return self.visitChildren(ctx)
