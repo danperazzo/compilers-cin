@@ -540,7 +540,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                             if type_exp == Type.FLOAT:
                                 mul_op = "f"+mul_op
                             
-                            line_mul = "	%%%d = %s %s %%%d, %s\n" % (self.count_regs, mul_op,tyype_ll,self.count_regs-1, reg)
+                            line_mul = "	%%%d = %s %s %s, %%%d\n" % (self.count_regs, mul_op,tyype_ll, self.ids_regs[id_name],self.count_regs-1)
                             self.count_regs = self.count_regs + 1
                             self.file_ll.write(line_mul)
 

@@ -1,28 +1,3 @@
-define i32 @scalar(i32 %0, i32 %1) {
-%a = alloca i32, align 4
-store i32 %0, i32* %a, align 4
-%b = alloca i32, align 4
-store i32 %1, i32* %b, align 4
-%3 = load i32, i32* %a, align 4
-%4 = load i32, i32* %b, align 4
-%5 = sub i32 0, %4
-%6 = mul i32 %5, %5
-store i32 %6, i32* %a, align 4
-%7 = load i32, i32* %b, align 4
-%8 = add i32 %7, 1
-store i32 %8, i32* %b, align 4
-%9 = load i32, i32* %a, align 4
-%10 = mul i32 %9, %9
-%11 = load i32, i32* %b, align 4
-%12 = add i32 %10, %11
-%13 = sub i32 %11, %9
-%14 = mul i32 %13, %11
-%15 = add i32 %12, %14
-%16 = call i32 @half(i32 %15)
-%17 = add i32 %16, 3
-%18 = sdiv i32 %17, 2
-ret i32 %18
-}
 define float @fscalar(float %0, float %1) {
 %a = alloca float, align 4
 store float %0, float* %a, align 4
