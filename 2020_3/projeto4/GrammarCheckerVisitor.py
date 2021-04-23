@@ -441,7 +441,7 @@ class GrammarCheckerVisitor(ParseTreeVisitor):
                     val_old = val_old + 1
                 tyype_ll = type2lltype(tyype)
 
-                line_add_op_inc = "	%%%d = add %%%d, 1\n" % (self.count_regs,self.count_regs - 1)
+                line_add_op_inc = "	%%%d = add %s %%%d, 1\n" % (self.count_regs,tyype_ll,self.count_regs - 1)
                 self.count_regs = self.count_regs + 1
                 line_store_op_inc = "	store %s %%%d, %s* %%%s, align 4\n" % (tyype_ll,self.count_regs - 1,tyype_ll,name)
                 self.file_ll.write(line_add_op_inc+line_store_op_inc)
